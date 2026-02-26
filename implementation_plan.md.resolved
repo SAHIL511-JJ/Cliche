@@ -1,0 +1,754 @@
+# Fix All 5 Post Type Flows — Implementation Plan
+
+## Background
+
+This is an **anonymous social polling app** (Next.js 14 frontend + FastAPI backend + PostgreSQL). It has 5 post types: `poll`, `wyr`, `rate`, `compare`, `rank`. Currently all 5 share nearly identical vote UIs and results pages, which is wrong. This plan fixes each type to have the correct, distinct flow.
+
+---
+
+## Codebase Map (read these files first)
+
+| File | Role |
+|---|---|
+| [frontend/app/page.tsx](file:///c:/cliche/frontend/app/page.tsx) | Home feed — renders [FeedCard](file:///c:/cliche/frontend/components/feed/FeedCard.tsx#10-117) per post |
+| [frontend/components/feed/FeedCard.tsx](file:///c:/cliche/frontend/components/feed/FeedCard.tsx) | Preview card shown in feed |
+| [frontend/app/p/[id]/page.tsx](file:///c:/cliche/frontend/app/p/%5Bid%5D/page.tsx) | **Vote page** — where users interact and vote |
+| [frontend/components/vote/PollOption.tsx](file:///c:/cliche/frontend/components/vote/PollOption.tsx) | Card used for poll voting (keep for poll only) |
+| [frontend/components/vote/RateSlider.tsx](file:///c:/cliche/frontend/components/vote/RateSlider.tsx) | 1–10 slider component |
+| [frontend/app/p/[id]/results/page.tsx](file:///c:/cliche/frontend/app/p/%5Bid%5D/results/page.tsx) | Results page shown after voting |
+| [frontend/app/create/page.tsx](file:///c:/cliche/frontend/app/create/page.tsx) | 5-step post creation wizard |
+| [frontend/lib/types.ts](file:///c:/cliche/frontend/lib/types.ts) | TypeScript interfaces (Post, Vote, Item, etc.) |
+| [frontend/lib/api.ts](file:///c:/cliche/frontend/lib/api.ts) | All API calls |
+| [backend/app/routes/votes.py](file:///c:/cliche/backend/app/routes/votes.py) | `POST /posts/{id}/vote`, `GET /posts/{id}/results` |
+| [backend/app/routes/posts.py](file:///c:/cliche/backend/app/routes/posts.py) | `POST /posts`, `GET /posts`, `GET /posts/{id}` |
+
+---
+
+## Issues & Fixes Per Post Type
+
+---
+
+### 1. 🗳️ Poll — Minor Fixes Only
+
+**Current:** Card grid with Submit button. Works correctly.
+
+**Bugs to fix:**
+
+#### Bug 1a — FeedCard broken image
+**File:** [frontend/components/feed/FeedCard.tsx](file:///c:/cliche/frontend/components/feed/FeedCard.tsx)  
+**Problem:** Line 42–47 renders `<img src={item.image_url}>` unconditionally. If `image_url` is `null`, the image breaks.  
+**Fix:** Wrap the image in a conditional:
+```tsx
+// Replace the <div className="relative aspect-square"> block with:
+<div key={item.id} className="relative aspect-square overflow-hidden bg-gray-100">
+  {item.image_url ? (
+    <img src={item.image_url} alt={item.name || `Option ${index + 1}`}
+      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />
+  ) : (
+    <div className="w-full h-full flex items-center justify-center">
+      <span className="text-2xl font-bold text-gray-300">{item.name?.charAt(0) || '?'}</span>
+    </div>
+  )}
+  {item.name && (
+    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent p-2">
+      <p className="text-white text-xs font-medium truncate">{item.name}</p>
+    </div>
+  )}
+</div>
+```
+
+---
+
+### 2. ⚡ Would You Rather (WYR) — Full Rework
+
+**Current:** Identical to Poll. Wrong.  
+**Correct flow:** Dramatic split screen, instant tap = vote, no submit button, tug-of-war results.
+
+#### Fix 2a — New `WyrVote` Component
+**File:** Create `frontend/components/vote/WyrVote.tsx` (new file)
+
+This component receives `items: Item[]` (exactly 2) and `onVote: (itemId: string) => void`.
+
+```tsx
+'use client'
+import { useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import type { Item } from '@/lib/types'
+
+interface WyrVoteProps {
+  items: Item[]           // Always exactly 2
+  onVote: (itemId: string) => void
+  submitting: boolean
+}
+
+export function WyrVote({ items, onVote, submitting }: WyrVoteProps) {
+  const [hoveredId, setHoveredId] = useState<string | null>(null)
+  const [A, B] = items
+
+  return (
+    <div className="flex flex-col md:flex-row h-[70vh] rounded-3xl overflow-hidden shadow-2xl relative">
+      {/* Option A — left side */}
+      <motion.button
+        className="flex-1 relative flex flex-col items-center justify-end pb-12 cursor-pointer"
+        style={{ background: hoveredId === A.id ? 'linear-gradient(135deg,#0ea5e9,#6366f1)' : 'linear-gradient(135deg,#e0f2fe,#ede9fe)' }}
+        onHoverStart={() => setHoveredId(A.id)}
+        onHoverEnd={() => setHoveredId(null)}
+        onClick={() => !submitting && onVote(A.id)}
+        whileTap={{ scale: 0.97 }}
+        disabled={submitting}
+      >
+        {A.image_url && (
+          <img src={A.image_url} alt={A.name}
+            className="absolute inset-0 w-full h-full object-cover"
+            style={{ opacity: hoveredId === A.id ? 0.4 : 0.15, transition: 'opacity 0.3s' }} />
+        )}
+        <motion.p
+          className="relative z-10 text-2xl md:text-4xl font-black text-center px-6"
+          style={{ color: hoveredId === A.id ? '#fff' : '#1e293b' }}
+        >
+          {A.name}
+        </motion.p>
+        {hoveredId === A.id && (
+          <motion.p initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
+            className="relative z-10 mt-3 text-white/80 font-semibold text-sm">
+            Tap to choose
+          </motion.p>
+        )}
+      </motion.button>
+
+      {/* VS Badge — center */}
+      <div className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none">
+        <motion.div
+          className="w-16 h-16 rounded-full bg-white shadow-2xl flex items-center justify-center"
+          animate={{ scale: hoveredId ? 1.15 : 1 }}
+          transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+        >
+          <span className="text-lg font-black text-gray-700">OR</span>
+        </motion.div>
+      </div>
+
+      {/* Option B — right side */}
+      <motion.button
+        className="flex-1 relative flex flex-col items-center justify-end pb-12 cursor-pointer"
+        style={{ background: hoveredId === B.id ? 'linear-gradient(135deg,#f59e0b,#ef4444)' : 'linear-gradient(135deg,#fef3c7,#fee2e2)' }}
+        onHoverStart={() => setHoveredId(B.id)}
+        onHoverEnd={() => setHoveredId(null)}
+        onClick={() => !submitting && onVote(B.id)}
+        whileTap={{ scale: 0.97 }}
+        disabled={submitting}
+      >
+        {B.image_url && (
+          <img src={B.image_url} alt={B.name}
+            className="absolute inset-0 w-full h-full object-cover"
+            style={{ opacity: hoveredId === B.id ? 0.4 : 0.15, transition: 'opacity 0.3s' }} />
+        )}
+        <motion.p
+          className="relative z-10 text-2xl md:text-4xl font-black text-center px-6"
+          style={{ color: hoveredId === B.id ? '#fff' : '#1e293b' }}
+        >
+          {B.name}
+        </motion.p>
+        {hoveredId === B.id && (
+          <motion.p initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
+            className="relative z-10 mt-3 text-white/80 font-semibold text-sm">
+            Tap to choose
+          </motion.p>
+        )}
+      </motion.button>
+
+      {submitting && (
+        <div className="absolute inset-0 z-30 flex items-center justify-center bg-white/60">
+          <div className="w-10 h-10 border-4 border-sky-500 border-t-transparent rounded-full animate-spin" />
+        </div>
+      )}
+    </div>
+  )
+}
+```
+
+#### Fix 2b — Vote Page: Use `WyrVote` for `wyr` type
+**File:** [frontend/app/p/[id]/page.tsx](file:///c:/cliche/frontend/app/p/%5Bid%5D/page.tsx)
+
+The [handleSubmit](file:///c:/cliche/frontend/app/p/%5Bid%5D/page.tsx#80-133) function currently requires clicking a button. For `wyr`, bypass this — pass `onVote` directly.
+
+**Step 1:** Import `WyrVote`:
+```tsx
+import { WyrVote } from '@/components/vote/WyrVote'
+```
+
+**Step 2:** Add a `handleWyrVote` function:
+```tsx
+const handleWyrVote = async (itemId: string) => {
+  if (!post || submitting) return
+  setSubmitting(true)
+  setError(null)
+  try {
+    await api.submitVote(postId, { item_id: itemId })
+    router.push(`/p/${postId}/results`)
+  } catch (err: any) {
+    if (err.code === 'ALREADY_VOTED') {
+      router.push(`/p/${postId}/results`)
+      return
+    }
+    setError(err.message || 'Failed to submit vote')
+    setSubmitting(false)
+  }
+}
+```
+
+**Step 3:** In the JSX, replace the WYR section. Currently both `poll` and `wyr` share this block (line 187):
+```tsx
+{(post.type === 'poll' || post.type === 'wyr') && ( ... )}
+```
+Split it into two separate conditions:
+```tsx
+{post.type === 'wyr' && (
+  <WyrVote items={post.items} onVote={handleWyrVote} submitting={submitting} />
+)}
+
+{post.type === 'poll' && (
+  <motion.div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8" ...>
+    {post.items.map((item) => (
+      <PollOption key={item.id} item={item}
+        selected={selectedItemId === item.id}
+        onClick={() => setSelectedItemId(item.id)} />
+    ))}
+  </motion.div>
+)}
+```
+
+**Step 4:** The fixed bottom Submit button should NOT show for `wyr`. Wrap it:
+```tsx
+{post.type !== 'wyr' && (
+  <motion.div className="fixed bottom-0 ...">
+    ...Submit Vote button...
+  </motion.div>
+)}
+```
+
+#### Fix 2c — FeedCard: WYR shows VS layout
+**File:** [frontend/components/feed/FeedCard.tsx](file:///c:/cliche/frontend/components/feed/FeedCard.tsx)
+
+Replace the image grid section (the `<div className="grid grid-cols-2 ...">` block) with a conditional:
+
+```tsx
+{/* Image/preview area */}
+{post.type === 'wyr' ? (
+  // WYR: two items side by side with VS badge
+  <div className="relative flex h-40">
+    <div className="flex-1 relative overflow-hidden bg-sky-100">
+      {post.items[0]?.image_url ? (
+        <img src={post.items[0].image_url} alt={post.items[0].name}
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+      ) : (
+        <div className="w-full h-full flex items-center justify-center">
+          <span className="text-xl font-bold text-sky-400">{post.items[0]?.name?.charAt(0)}</span>
+        </div>
+      )}
+      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-2">
+        <p className="text-white text-xs font-semibold truncate">{post.items[0]?.name}</p>
+      </div>
+    </div>
+    {/* VS badge */}
+    <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
+      <div className="w-10 h-10 rounded-full bg-white shadow-xl flex items-center justify-center">
+        <span className="text-xs font-black text-gray-700">VS</span>
+      </div>
+    </div>
+    <div className="flex-1 relative overflow-hidden bg-amber-100">
+      {post.items[1]?.image_url ? (
+        <img src={post.items[1].image_url} alt={post.items[1].name}
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+      ) : (
+        <div className="w-full h-full flex items-center justify-center">
+          <span className="text-xl font-bold text-amber-400">{post.items[1]?.name?.charAt(0)}</span>
+        </div>
+      )}
+      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-2">
+        <p className="text-white text-xs font-semibold truncate">{post.items[1]?.name}</p>
+      </div>
+    </div>
+  </div>
+) : (
+  // Poll/rate/rank/compare: 2x2 grid (existing code, with null-safe image fix from Bug 1a)
+  <div className="grid grid-cols-2 gap-0.5 bg-gray-100">
+    {post.items.slice(0, 4).map((item, index) => (
+      <div key={item.id} className="relative aspect-square overflow-hidden bg-gray-100">
+        {item.image_url ? (
+          <img src={item.image_url} alt={item.name || `Option ${index + 1}`}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center">
+            <span className="text-2xl font-bold text-gray-300">{item.name?.charAt(0) || '?'}</span>
+          </div>
+        )}
+        {item.name && (
+          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent p-2">
+            <p className="text-white text-xs font-medium truncate">{item.name}</p>
+          </div>
+        )}
+      </div>
+    ))}
+  </div>
+)}
+```
+
+Also fix `postTypeLabel` and `postTypeColor` to include `compare` (currently missing):
+```tsx
+const postTypeLabel: Record<string, string> = {
+  rate: 'Rate 1–10',
+  poll: 'Poll',
+  wyr: 'Would You Rather',
+  rank: 'Ranking',
+  compare: 'Compare',
+}
+const postTypeColor: Record<string, string> = {
+  rate: 'bg-violet-50 text-violet-600',
+  poll: 'bg-sky-50 text-sky-600',
+  wyr: 'bg-amber-50 text-amber-600',
+  rank: 'bg-emerald-50 text-emerald-600',
+  compare: 'bg-rose-50 text-rose-600',
+}
+```
+
+#### Fix 2d — Results: WYR tug-of-war bar
+**File:** [frontend/app/p/[id]/results/page.tsx](file:///c:/cliche/frontend/app/p/%5Bid%5D/results/page.tsx)
+
+In the "Results Breakdown" section, add a conditional for `wyr`:
+```tsx
+{post.type === 'wyr' && results.items.length === 2 ? (
+  // Tug-of-war layout
+  <div className="space-y-4">
+    <div className="flex items-center gap-4">
+      <div className="w-24 text-right">
+        {results.items[0]?.image_url && (
+          <img src={results.items[0].image_url} className="w-10 h-10 rounded-lg object-cover ml-auto" />
+        )}
+        <p className="text-sm font-semibold text-gray-900 mt-1">{results.items[0]?.name}</p>
+        <p className="text-lg font-bold text-sky-500">{results.items[0]?.percentage?.toFixed(1)}%</p>
+      </div>
+      <div className="flex-1 h-8 relative rounded-full overflow-hidden bg-gray-100">
+        {/* Left bar (A) */}
+        <motion.div
+          initial={{ width: 0 }}
+          animate={{ width: `${results.items[0]?.percentage ?? 0}%` }}
+          transition={{ duration: 1, ease: 'easeOut' }}
+          className="absolute left-0 top-0 h-full bg-gradient-to-r from-sky-500 to-sky-400 rounded-l-full"
+        />
+        {/* Right bar (B) */}
+        <motion.div
+          initial={{ width: 0 }}
+          animate={{ width: `${results.items[1]?.percentage ?? 0}%` }}
+          transition={{ duration: 1, ease: 'easeOut' }}
+          className="absolute right-0 top-0 h-full bg-gradient-to-l from-amber-500 to-amber-400 rounded-r-full"
+        />
+      </div>
+      <div className="w-24">
+        {results.items[1]?.image_url && (
+          <img src={results.items[1].image_url} className="w-10 h-10 rounded-lg object-cover" />
+        )}
+        <p className="text-sm font-semibold text-gray-900 mt-1">{results.items[1]?.name}</p>
+        <p className="text-lg font-bold text-amber-500">{results.items[1]?.percentage?.toFixed(1)}%</p>
+      </div>
+    </div>
+  </div>
+) : (
+  // Existing bar chart for all other types (keep existing JSX)
+  <div className="space-y-6">
+    {results.items.map((item, index) => { /* existing code */ })}
+  </div>
+)}
+```
+
+---
+
+### 3. ⭐ Rate — Minor Fix
+
+**Current:** Vote page makes user select an item first, but `rate` always has exactly 1 item — so the item-select step is useless.
+
+#### Fix 3a — Skip item selection for `rate` type
+**File:** [frontend/app/p/[id]/page.tsx](file:///c:/cliche/frontend/app/p/%5Bid%5D/page.tsx)
+
+In [loadPost()](file:///c:/cliche/frontend/app/p/%5Bid%5D/page.tsx#35-65), after setting state, auto-select the only item for `rate`:
+```tsx
+if (response.data.type === 'rate') {
+  setSelectedItemId(response.data.items[0]?.id ?? null)
+}
+```
+
+In the JSX, the `rate`/`compare` block (line 214) currently shows all items as selectable buttons then shows sliders. For `rate`, skip the item buttons and go straight to sliders:
+```tsx
+{post.type === 'rate' && (
+  <div className="space-y-8">
+    {/* Skip the item selector — auto-selected */}
+    {post.attributes && selectedItemId && (
+      <motion.div ...>
+        <h3 className="font-semibold text-gray-900 mb-6">
+          Rate: {post.items[0]?.name}
+        </h3>
+        <div className="space-y-6">
+          {post.attributes.map((attr, index) => (
+            <RateSlider key={attr} attribute={attr}
+              value={ratings[selectedItemId]?.[attr] || 5}
+              onChange={(value) => handleRatingChange(selectedItemId, attr, value)} />
+          ))}
+        </div>
+      </motion.div>
+    )}
+  </div>
+)}
+```
+
+#### Fix 3b — Create page: Auto-skip Step 3 for non-rate/compare types
+**File:** [frontend/app/create/page.tsx](file:///c:/cliche/frontend/app/create/page.tsx)
+
+Step 3 currently shows a "No attributes needed" placeholder for `poll`, `wyr`, `rank`. This wastes a step. Fix by adding a `getMaxStep()` helper and skipping step 3 conditionally:
+
+**Option A (simpler):** In the `Continue` button handler, if `step === 2` and `postMode` is not `rate`/`compare`, jump to step 4:
+```tsx
+const handleNext = () => {
+  if (step === 2 && postMode !== 'rate' && postMode !== 'compare') {
+    setStep(4) // skip step 3 (attributes)
+  } else if (step === 4 && postMode !== 'rate' && postMode !== 'compare') {
+    setStep(5) // step 3 was already skipped, so step 4 -> 5 is normal, but adjust step counter display too
+  } else {
+    setStep(step + 1)
+  }
+}
+```
+Also update `Back` button: if `step === 4` and not rate/compare, go back to step 2.
+
+**Also update step indicator:** Change the 5-circle progress bar to dynamically show 4 circles for non-rate/compare modes (i.e., `[1,2,4,5]` mapped to visual steps `[1,2,3,4]`).
+
+**Option B (cleaner):** Change the step numbering to use a `steps` array filtered by the current mode, and derive the actual step number from it. This keeps the existing circular display correct but requires more refactoring. Option A is preferred for minimal diff.
+
+---
+
+### 4. ⚖️ Compare — Significant Rework
+
+**Current:** Treats Compare exactly like Rate — user picks ONE item and rates it. This is wrong. Compare means rating ALL items on the same attributes in one go.
+
+#### Fix 4a — Vote page: Rate ALL items for `compare`
+**File:** [frontend/app/p/[id]/page.tsx](file:///c:/cliche/frontend/app/p/%5Bid%5D/page.tsx)
+
+The `compare` JSX block (currently merged with `rate` on line 214) should be separated. For `compare`, show each item with its sliders stacked vertically:
+
+```tsx
+{post.type === 'compare' && (
+  <div className="space-y-6">
+    <p className="text-sm text-gray-500">Rate each item on every attribute:</p>
+    {post.items.map((item, idx) => (
+      <motion.div key={item.id}
+        className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100"
+        initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: idx * 0.1 }}>
+        <div className="flex items-center gap-3 mb-5">
+          {item.image_url && (
+            <img src={item.image_url} alt={item.name} className="w-12 h-12 rounded-xl object-cover" />
+          )}
+          <h3 className="font-bold text-gray-900 text-lg">{item.name}</h3>
+        </div>
+        <div className="space-y-5">
+          {post.attributes?.map((attr) => (
+            <RateSlider key={attr} attribute={attr}
+              value={ratings[item.id]?.[attr] || 5}
+              onChange={(value) => handleRatingChange(item.id, attr, value)} />
+          ))}
+        </div>
+      </motion.div>
+    ))}
+  </div>
+)}
+```
+
+#### Fix 4b — Vote submission for `compare`
+**File:** [frontend/app/p/[id]/page.tsx](file:///c:/cliche/frontend/app/p/%5Bid%5D/page.tsx) — the [handleSubmit](file:///c:/cliche/frontend/app/p/%5Bid%5D/page.tsx#80-133) function's `compare` case
+
+Currently it submits only 1 item. For `compare`, we need to submit ratings for ALL items. But the existing API/backend `POST /posts/{id}/vote` takes only one `item_id` + one set of `ratings` per request.
+
+**Two options:**
+
+**Option A — Multiple vote calls (one per item):** Submit one vote per item sequentially. Backend will reject the 2nd call with `ALREADY_VOTED` (409). ❌ Won't work.
+
+**Option B — Change backend to accept multi-item ratings:** Modify the vote payload and backend.
+
+**Chosen approach: Option B**
+
+**Backend change** ([backend/app/routes/votes.py](file:///c:/cliche/backend/app/routes/votes.py)):
+- Add a new optional field `multi_ratings: dict[str, dict[str, int]] | None` to the `VoteRequest` schema (in [backend/app/schemas/__init__.py](file:///c:/cliche/backend/app/schemas/__init__.py) or wherever `VoteRequest` is defined)
+- In [submit_vote()](file:///c:/cliche/backend/app/routes/votes.py#12-131), for `compare` type, loop over `vote_data.multi_ratings` and insert one row per item into `votes`, then update `items.vote_count` + `items.total_score` for each
+
+**Frontend change** ([frontend/lib/types.ts](file:///c:/cliche/frontend/lib/types.ts)):
+Add `multi_ratings?: Record<string, Record<string, number>>` to the [Vote](file:///c:/cliche/frontend/lib/types.ts#35-40) interface.
+
+**Frontend change** ([frontend/app/p/[id]/page.tsx](file:///c:/cliche/frontend/app/p/%5Bid%5D/page.tsx)):
+```tsx
+case 'compare':
+  // ratings state holds { [itemId]: { [attr]: value } } — already correctly populated
+  const hasAllRatings = post.items.every(item => ratings[item.id] && Object.keys(ratings[item.id]).length > 0)
+  if (!hasAllRatings) {
+    setError('Please rate all items')
+    setSubmitting(false)
+    return
+  }
+  vote = { multi_ratings: ratings }
+  break
+```
+
+#### Fix 4c — Results page: Compare shows leaderboard
+**File:** [frontend/app/p/[id]/results/page.tsx](file:///c:/cliche/frontend/app/p/%5Bid%5D/results/page.tsx)
+
+For `compare` type, the results should display each item with its per-attribute average scores, sorted by total average score (leaderboard order):
+
+```tsx
+{post.type === 'compare' && (
+  <div className="space-y-4">
+    {[...results.items]
+      .sort((a, b) => {
+        const aTotal = a.avg_scores ? Object.values(a.avg_scores).reduce((s, v) => s + v, 0) : 0
+        const bTotal = b.avg_scores ? Object.values(b.avg_scores).reduce((s, v) => s + v, 0) : 0
+        return bTotal - aTotal
+      })
+      .map((item, index) => {
+        const totalAvg = item.avg_scores
+          ? Object.values(item.avg_scores).reduce((s, v) => s + v, 0) / Object.keys(item.avg_scores).length
+          : 0
+        return (
+          <motion.div key={item.id}
+            className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm"
+            initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: index * 0.1 }}>
+            <div className="flex items-center gap-3 mb-3">
+              <span className="w-8 h-8 rounded-full bg-sky-100 text-sky-600 flex items-center justify-center font-bold text-sm">
+                {index + 1}
+              </span>
+              {item.image_url && <img src={item.image_url} className="w-10 h-10 rounded-lg object-cover" />}
+              <span className="font-bold text-gray-900 flex-1">{item.name}</span>
+              <span className="text-lg font-bold text-sky-600">{totalAvg.toFixed(1)}/10</span>
+            </div>
+            {item.avg_scores && (
+              <div className="flex flex-wrap gap-2">
+                {Object.entries(item.avg_scores).map(([attr, score]) => (
+                  <span key={attr} className="text-xs px-3 py-1 bg-gray-50 rounded-full font-medium">
+                    {attr}: <span className="text-sky-600">{score.toFixed(1)}</span>
+                  </span>
+                ))}
+              </div>
+            )}
+          </motion.div>
+        )
+      })}
+  </div>
+)}
+```
+
+#### Fix 4d — Backend: Handle `multi_ratings` in vote submission
+**File:** [backend/app/routes/votes.py](file:///c:/cliche/backend/app/routes/votes.py) — [submit_vote()](file:///c:/cliche/backend/app/routes/votes.py#12-131) function
+
+After existing `compare` validation block, replace the single-item insert logic for the `compare` type:
+
+```python
+# In the transaction block, after inserting the vote lock:
+if post["type"] == "compare" and vote_data.multi_ratings:
+    for item_id, item_ratings in vote_data.multi_ratings.items():
+        # Verify item belongs to this post
+        item = await db.fetchrow("SELECT id FROM items WHERE id = $1 AND post_id = $2", item_id, post_id)
+        if not item:
+            continue
+        vote_id = await db.fetchval("""
+            INSERT INTO votes (post_id, item_id, ip_hash, browser_id, ratings)
+            VALUES ($1, $2, $3, $4, $5) RETURNING id
+        """, post_id, item_id, ip_hash, browser_id, json.dumps(item_ratings))
+        await db.execute("UPDATE items SET vote_count = vote_count + 1 WHERE id = $1", item_id)
+        for attr, score in item_ratings.items():
+            await db.execute("UPDATE items SET total_score = total_score + $1 WHERE id = $2", score, item_id)
+    # Only one vote lock per user per post (already inserted above)
+    await db.execute("UPDATE posts SET vote_count = vote_count + 1 WHERE id = $1", post_id)
+```
+
+Also update `VoteRequest` schema to include `multi_ratings`:
+**File:** [backend/app/schemas/__init__.py](file:///c:/cliche/backend/app/schemas/__init__.py) (or wherever `VoteRequest` is defined — check this file first)
+```python
+class VoteRequest(BaseModel):
+    item_id: Optional[str] = None
+    ratings: Optional[Dict[str, int]] = None
+    ranking: Optional[List[str]] = None
+    multi_ratings: Optional[Dict[str, Dict[str, int]]] = None  # NEW — for compare type
+```
+
+---
+
+### 5. 🏆 Rank — Results Fix
+
+**Current:** Backend never increments `items.vote_count` for rank posts (rank votes only set `ranking` JSONB, not `item_id`). Results page calculates percentage from `vote_count` — always shows 0%.
+
+**Correct metric:** Average rank position. Item that people most often ranked #1 wins.
+
+#### Fix 5a — Backend: Calculate rank results from JSONB
+**File:** [backend/app/routes/votes.py](file:///c:/cliche/backend/app/routes/votes.py) — [get_results()](file:///c:/cliche/backend/app/routes/votes.py#172-279) function
+
+In [get_results()](file:///c:/cliche/backend/app/routes/votes.py#172-279), add a special case before building `items_data` for `rank` type:
+
+```python
+if post["type"] == "rank":
+    # Fetch all ranking votes for this post
+    all_rankings = await db.fetch(
+        "SELECT ranking FROM votes WHERE post_id = $1 AND ranking IS NOT NULL", post_id
+    )
+    total_votes = len(all_rankings)
+    # Build position sums per item_id
+    position_sums = {str(item["id"]): 0 for item in items}
+    position_counts = {str(item["id"]): 0 for item in items}
+    for vote_row in all_rankings:
+        ranking = json.loads(vote_row["ranking"])  # list of item_id strings, index 0 = rank 1
+        for position, item_id in enumerate(ranking):
+            if item_id in position_sums:
+                position_sums[item_id] += (position + 1)  # 1-based rank
+                position_counts[item_id] += 1
+    # Build items_data with avg_position and derived percentage
+    items_data = []
+    for item in items:
+        item_id = str(item["id"])
+        count = position_counts[item_id]
+        avg_pos = round(position_sums[item_id] / count, 2) if count > 0 else 999
+        items_data.append({
+            "id": item_id,
+            "name": item["name"],
+            "image_url": item["image_url"],
+            "vote_count": count,
+            "avg_position": avg_pos,
+            "percentage": 0,   # not meaningful for rank
+        })
+    # Sort by avg_position ascending (lower = better rank)
+    items_data.sort(key=lambda x: x["avg_position"])
+    # Winner = lowest avg_position
+    winner = items_data[0] if items_data else None
+    return {
+        "success": True,
+        "data": {
+            "post": {...},
+            "results": {
+                "winner": {"item_id": winner["id"], "name": winner["name"], "avg_position": winner["avg_position"]} if winner else None,
+                "items": items_data,
+            }
+        }
+    }
+```
+Add early return before the generic `items_data` loop below this block.
+
+#### Fix 5b — Frontend: Results page for rank type
+**File:** [frontend/app/p/[id]/results/page.tsx](file:///c:/cliche/frontend/app/p/%5Bid%5D/results/page.tsx)
+
+Add `avg_position?: number` to the [Item](file:///c:/cliche/frontend/lib/types.ts#7-18) interface in [frontend/lib/types.ts](file:///c:/cliche/frontend/lib/types.ts).
+
+In the results breakdown section, add a rank-specific display:
+
+```tsx
+{post.type === 'rank' ? (
+  <div className="space-y-3">
+    {results.items.map((item, index) => (
+      <motion.div key={item.id}
+        className="flex items-center gap-4 p-4 bg-white rounded-2xl shadow-sm border border-gray-100"
+        initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}
+        transition={{ delay: index * 0.1 }}>
+        <span className={`w-10 h-10 rounded-full flex items-center justify-center font-black text-lg
+          ${index === 0 ? 'bg-amber-400 text-white' : index === 1 ? 'bg-gray-300 text-white' : index === 2 ? 'bg-amber-700 text-white' : 'bg-gray-100 text-gray-500'}`}>
+          {index + 1}
+        </span>
+        {item.image_url && <img src={item.image_url} className="w-12 h-12 rounded-xl object-cover" />}
+        <span className="flex-1 font-semibold text-gray-900">{item.name}</span>
+        {item.avg_position && (
+          <span className="text-sm text-gray-400">avg #{item.avg_position.toFixed(1)}</span>
+        )}
+        {index === 0 && <span className="text-xl">🏆</span>}
+      </motion.div>
+    ))}
+  </div>
+) : post.type === 'wyr' ? (
+  /* ... tug-of-war code from Fix 2d ... */
+) : post.type === 'compare' ? (
+  /* ... leaderboard code from Fix 4c ... */
+) : (
+  /* ... existing bar chart for poll/rate ... */
+)}
+```
+
+#### Fix 5c — Remove wasted step 3 placeholder (create page)
+Already covered in Fix 3b.
+
+---
+
+## Complete File Change Summary
+
+| File | Changes |
+|---|---|
+| [frontend/components/feed/FeedCard.tsx](file:///c:/cliche/frontend/components/feed/FeedCard.tsx) | WYR VS layout, null-safe images, add `compare` to label/color maps |
+| `frontend/components/vote/WyrVote.tsx` | **NEW FILE** — dramatic split-screen WYR component |
+| [frontend/app/p/[id]/page.tsx](file:///c:/cliche/frontend/app/p/%5Bid%5D/page.tsx) | Split poll/wyr JSX; add `handleWyrVote`; auto-select item for rate; handle compare multi-ratings; hide submit for wyr |
+| [frontend/app/p/[id]/results/page.tsx](file:///c:/cliche/frontend/app/p/%5Bid%5D/results/page.tsx) | WYR tug-of-war, compare leaderboard, rank ordered list |
+| [frontend/app/create/page.tsx](file:///c:/cliche/frontend/app/create/page.tsx) | Skip step 3 for non-rate/compare modes |
+| [frontend/lib/types.ts](file:///c:/cliche/frontend/lib/types.ts) | Add `multi_ratings` to [Vote](file:///c:/cliche/frontend/lib/types.ts#35-40); add `avg_position` to [Item](file:///c:/cliche/frontend/lib/types.ts#7-18) |
+| [backend/app/schemas/__init__.py](file:///c:/cliche/backend/app/schemas/__init__.py) | Add `multi_ratings` to `VoteRequest` |
+| [backend/app/routes/votes.py](file:///c:/cliche/backend/app/routes/votes.py) | Handle `multi_ratings` in submit; rank results from JSONB |
+
+---
+
+## Verification Plan
+
+### How to run the app locally
+
+```bash
+# Terminal 1 — Backend
+cd c:\cliche\backend
+python -m uvicorn app.main:app --reload --port 8000
+
+# Terminal 2 — Frontend
+cd c:\cliche\frontend
+npm run dev
+# Opens at http://localhost:3000
+```
+
+### Manual Test Cases
+
+#### Test 1 — Poll flow (unchanged, regression check)
+1. Go to `http://localhost:3000/create`
+2. Select **Poll**, add 3 options with names, skip to step 4, add caption "Which is best?", set duration, click Create
+3. Click "View Post" → should see 3 [PollOption](file:///c:/cliche/frontend/components/vote/PollOption.tsx#12-57) cards in a 2-column grid
+4. Click one option → it highlights with blue border + checkmark
+5. Click **Submit Vote** → redirects to `/p/{id}/results`
+6. Results should show: winner banner, vertical bar chart with percentages, Share button
+
+#### Test 2 — Would You Rather flow
+1. Go to `/create`, select **Would You Rather**, add exactly 2 options ("Pizza" and "Tacos")
+2. Create the post, click "View Post"
+3. **Vote page** should show: full-screen split, left = "Pizza" (blue gradient), right = "Tacos" (amber gradient), "OR" badge in center
+4. Hover over one side → it should brighten and show "Tap to choose"
+5. Click one side → immediately submits (no button), redirects to results
+6. **Results page** should show: winner banner + tug-of-war bar (two bars meeting in center, percentages on each side)
+7. Share button should work
+
+#### Test 3 — Rate flow
+1. Create a **Rate This** post with 1 item (e.g., "My Photo") and attributes: Looks, Vibe
+2. Click "View Post" → vote page should go **directly** to sliders, no item selection step shown
+3. Adjust sliders, click Submit → results show average scores per attribute
+
+#### Test 4 — Compare flow
+1. Create a **Compare** post with 3 items and attributes: Style, Vibe
+2. Vote page should show **all 3 items** with their own slider sets (not just one at a time)
+3. Adjust all sliders for all items, click Submit
+4. Results should show a **leaderboard** — items ranked 1st/2nd/3rd by total average score, with per-attribute breakdown visible
+
+#### Test 5 — Rank flow
+1. Create a **Ranking** post with 4 items
+2. Vote page: reorder items using ↑↓ buttons, click Submit
+3. Results should show items in **average rank order** (most commonly ranked #1 at top), with #1/#2/#3 medals
+
+#### Test 6 — FeedCard regression
+1. Create posts of each type, go to home page
+2. WYR cards should show **VS badge** between two options
+3. Other type cards should show 2×2 image grid (or letter placeholder if no image)
+4. No console errors; `compare` type should show "Compare" label (not crash)
+
+#### Test 7 — Create page step skip
+1. Select **Poll** in create — step 2 (Add Items) → clicking Continue should jump to **step 4** (Caption), skipping the attributes step
+2. Select **Rate This** — clicking Continue from step 2 should go to **step 3** (Attributes)
