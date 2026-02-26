@@ -67,7 +67,7 @@ export function ShareSheet({ isOpen, onClose, url, title = 'Check this out!' }: 
             onClick={onClose}
           />
           <motion.div
-            className="fixed bottom-0 left-0 right-0 z-50 bg-[#14141e] border-t border-white/10 rounded-t-3xl p-6 pb-8"
+            className="fixed bottom-0 left-0 right-0 z-50 bg-[#141e1a] border-t border-white/10 rounded-t-3xl p-6 pb-8"
             initial={{ y: '100%' }}
             animate={{ y: 0 }}
             exit={{ y: '100%' }}
@@ -93,7 +93,7 @@ export function ShareSheet({ isOpen, onClose, url, title = 'Check this out!' }: 
             {!!navigator.share && (
               <button
                 onClick={handleNativeShare}
-                className="w-full py-3 bg-sky-500 text-white rounded-xl font-medium"
+                className="w-full py-3 bg-emerald-500 text-white rounded-xl font-medium"
               >
                 More Options
               </button>

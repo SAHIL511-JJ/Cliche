@@ -97,7 +97,7 @@ export default function ActivityPage() {
 
   const postTypeColor: Record<string, string> = {
     rate: 'bg-violet-500/20 text-violet-400 border-violet-500/30',
-    poll: 'bg-sky-500/20 text-sky-400 border-sky-500/30',
+    poll: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30',
     wyr: 'bg-amber-500/20 text-amber-400 border-amber-500/30',
     rank: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30',
     compare: 'bg-rose-500/20 text-rose-400 border-rose-500/30',
@@ -124,7 +124,7 @@ export default function ActivityPage() {
             <button
               onClick={() => setFilter('all')}
               className={`px-4 py-2 rounded-lg font-medium transition-all ${filter === 'all'
-                ? 'bg-gradient-to-r from-sky-500 to-purple-600 text-white shadow-lg shadow-sky-500/30'
+                ? 'bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-lg shadow-emerald-500/20'
                 : 'text-gray-400 hover:text-white hover:bg-white/5'
                 }`}
             >
@@ -133,7 +133,7 @@ export default function ActivityPage() {
             <button
               onClick={() => setFilter('live')}
               className={`px-4 py-2 rounded-lg font-medium transition-all ${filter === 'live'
-                ? 'bg-gradient-to-r from-emerald-500 to-emerald-600 text-white shadow-lg shadow-emerald-500/30'
+                ? 'bg-gradient-to-r from-emerald-500 to-emerald-600 text-white shadow-lg shadow-emerald-500/20'
                 : 'text-gray-400 hover:text-white hover:bg-white/5'
                 }`}
             >
@@ -142,7 +142,7 @@ export default function ActivityPage() {
             <button
               onClick={() => setFilter('ended')}
               className={`px-4 py-2 rounded-lg font-medium transition-all ${filter === 'ended'
-                ? 'bg-gradient-to-r from-sky-500 to-purple-600 text-white shadow-lg shadow-sky-500/30'
+                ? 'bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-lg shadow-emerald-500/20'
                 : 'text-gray-400 hover:text-white hover:bg-white/5'
                 }`}
             >
@@ -189,13 +189,13 @@ export default function ActivityPage() {
                   <div className="relative" style={{ borderTopLeftRadius: 'var(--radius-xl)', borderTopRightRadius: 'var(--radius-xl)', overflow: 'hidden' }}>
                     {post.type === 'wyr' ? (
                       <div className="relative flex h-32">
-                        <div className="flex-1 relative overflow-hidden bg-sky-900/30">
+                        <div className="flex-1 relative overflow-hidden bg-emerald-900/30">
                           {post.items[0]?.image_url ? (
                             <img src={post.items[0].image_url} alt={post.items[0].name}
                               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />
                           ) : (
-                            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-sky-500/20 to-purple-500/20">
-                              <span className="text-lg font-bold text-sky-400">{post.items[0]?.name?.charAt(0)}</span>
+                            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-emerald-500/20 to-teal-500/20">
+                              <span className="text-lg font-bold text-emerald-400">{post.items[0]?.name?.charAt(0)}</span>
                             </div>
                           )}
                         </div>
@@ -216,14 +216,14 @@ export default function ActivityPage() {
                         </div>
                       </div>
                     ) : (
-                      <div className="grid grid-cols-2 gap-1 bg-[#1a1a25]/50">
+                      <div className="grid grid-cols-2 gap-1 bg-[#1a2420]/50">
                         {post.items.slice(0, 4).map((item, idx) => (
-                          <div key={item.id} className="relative aspect-square overflow-hidden bg-[#1a1a25]/50">
+                          <div key={item.id} className="relative aspect-square overflow-hidden bg-[#1a2420]/50">
                             {item.image_url ? (
                               <img src={item.image_url} alt={item.name || `Option ${idx + 1}`}
                                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />
                             ) : (
-                              <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-sky-500/10 to-purple-500/10">
+                              <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-emerald-500/10 to-teal-500/10">
                                 <span className="text-2xl font-bold text-gray-500">{item.name?.charAt(0)}</span>
                               </div>
                             )}
@@ -234,7 +234,7 @@ export default function ActivityPage() {
 
                     {/* Status Badge */}
                     <div className={`absolute top-3 right-3 px-2.5 py-1 rounded-full text-xs font-semibold ${post.is_expired
-                      ? 'bg-[#1a1a25]/80 text-gray-400 border border-white/10'
+                      ? 'bg-[#1a2420]/80 text-gray-400 border border-white/10'
                       : 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
                       }`}>
                       {post.is_expired ? 'Ended' : 'Live'}
@@ -271,7 +271,7 @@ export default function ActivityPage() {
               {loadingMore && (
                 <div className="flex items-center gap-2 text-gray-500">
                   <motion.div
-                    className="w-4 h-4 border-2 border-sky-500 border-t-transparent rounded-full"
+                    className="w-4 h-4 border-2 border-emerald-500 border-t-transparent rounded-full"
                     animate={{ rotate: 360 }}
                     transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
                   />

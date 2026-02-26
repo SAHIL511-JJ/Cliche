@@ -35,7 +35,7 @@ export function CommentInput({
   }
 
   return (
-    <div className={`${replyTo ? 'bg-[#1a1a25]/50 rounded-xl p-3' : ''}`}>
+    <div className={`${replyTo ? 'bg-[#1a2420]/50 rounded-xl p-3' : ''}`}>
       {replyTo && (
         <div className="flex items-center justify-between mb-2">
           <span className="text-xs text-gray-500">
@@ -58,7 +58,7 @@ export function CommentInput({
           placeholder={placeholder}
           rows={replyTo ? 2 : 3}
           maxLength={1000}
-          className="flex-1 px-4 py-3 bg-[#1a1a25]/50 text-white placeholder-gray-500 border border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent resize-none text-sm"
+          className="flex-1 px-4 py-3 bg-[#1a2420]/50 text-white placeholder-gray-500 border border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent resize-none text-sm"
         />
       </div>
       <div className="flex items-center justify-between mt-2">

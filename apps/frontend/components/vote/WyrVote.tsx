@@ -29,7 +29,7 @@ export function WyrVote({ items, onVote, submitting }: WyrVoteProps) {
             className="absolute inset-0 w-full h-full object-cover"
             style={{ opacity: hoveredId === A.id ? 0.5 : 0.65, transition: 'opacity 0.3s' }} />
         ) : (
-          <div className="absolute inset-0 bg-gradient-to-br from-sky-900/50 to-indigo-900/50" />
+          <div className="absolute inset-0 bg-gradient-to-br from-emerald-900/50 to-indigo-900/50" />
         )}
         <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/70 to-transparent" />
         <motion.p
@@ -89,7 +89,7 @@ export function WyrVote({ items, onVote, submitting }: WyrVoteProps) {
 
       {submitting && (
         <div className="absolute inset-0 z-30 flex items-center justify-center bg-black/60">
-          <div className="w-10 h-10 border-4 border-sky-500 border-t-transparent rounded-full animate-spin" />
+          <div className="w-10 h-10 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin" />
         </div>
       )}
     </div>

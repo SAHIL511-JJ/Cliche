@@ -70,7 +70,7 @@ export default function MyPostsPage() {
 
   const postTypeColor: Record<string, string> = {
     rate: 'bg-violet-500/20 text-violet-400',
-    poll: 'bg-sky-500/20 text-sky-400',
+    poll: 'bg-emerald-500/20 text-emerald-400',
     wyr: 'bg-amber-500/20 text-amber-400',
     rank: 'bg-emerald-500/20 text-emerald-400',
     compare: 'bg-rose-500/20 text-rose-400',
@@ -107,7 +107,7 @@ export default function MyPostsPage() {
             transition={{ delay: 0.1 }}
           >
             <div className="glass-card p-4">
-              <div className="text-2xl font-bold text-sky-400">{total}</div>
+              <div className="text-2xl font-bold text-emerald-400">{total}</div>
               <div className="text-sm text-gray-400">Total Posts</div>
             </div>
             <div className="glass-card p-4">
@@ -166,7 +166,7 @@ export default function MyPostsPage() {
                           {post.type.slice(0, 3).toUpperCase()}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className="font-medium text-white line-clamp-1 hover:text-sky-400 transition-colors">
+                          <p className="font-medium text-white line-clamp-1 hover:text-emerald-400 transition-colors">
                             {post.caption || 'Untitled post'}
                           </p>
                           <div className="text-sm text-gray-500 flex items-center gap-2 mt-1">
@@ -193,7 +193,7 @@ export default function MyPostsPage() {
                           {post.items.length > 0 && (
                             <div className="flex gap-2 mt-2 overflow-x-auto">
                               {post.items.slice(0, 3).map((item) => (
-                                <div key={item.id} className="flex-shrink-0 w-16 h-16 rounded-lg bg-[#1a1a25] overflow-hidden border border-white/10">
+                                <div key={item.id} className="flex-shrink-0 w-16 h-16 rounded-lg bg-[#1a2420] overflow-hidden border border-white/10">
                                   {item.image_url ? (
                                     <img src={item.image_url} alt={item.name} className="w-full h-full object-cover" loading="lazy" />
                                   ) : (
@@ -204,7 +204,7 @@ export default function MyPostsPage() {
                                 </div>
                               ))}
                               {post.items.length > 3 && (
-                                <div className="w-16 h-16 rounded-lg bg-[#1a1a25] flex items-center justify-center text-sm text-gray-500 flex-shrink-0 border border-white/10">
+                                <div className="w-16 h-16 rounded-lg bg-[#1a2420] flex items-center justify-center text-sm text-gray-500 flex-shrink-0 border border-white/10">
                                   +{post.items.length - 3}
                                 </div>
                               )}

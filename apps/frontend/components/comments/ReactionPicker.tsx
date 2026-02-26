@@ -16,7 +16,7 @@ export function ReactionPicker({ onSelect, selected, onClose }: ReactionPickerPr
       initial={{ opacity: 0, scale: 0.9, y: 10 }}
       animate={{ opacity: 1, scale: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.9, y: 10 }}
-      className="flex items-center gap-1 bg-[#1a1a25] rounded-full shadow-lg border border-white/10 px-2 py-1"
+      className="flex items-center gap-1 bg-[#1a2420] rounded-full shadow-lg border border-white/10 px-2 py-1"
     >
       {REACTION_TYPES.map((type) => (
         <motion.button
@@ -27,7 +27,7 @@ export function ReactionPicker({ onSelect, selected, onClose }: ReactionPickerPr
           }}
           whileHover={{ scale: 1.2 }}
           whileTap={{ scale: 0.9 }}
-          className={`w-8 h-8 flex items-center justify-center rounded-full transition-colors ${selected === type ? 'bg-sky-500/20' : 'hover:bg-white/10'
+          className={`w-8 h-8 flex items-center justify-center rounded-full transition-colors ${selected === type ? 'bg-emerald-500/20' : 'hover:bg-white/10'
             }`}
         >
           <span className="text-lg">{REACTION_EMOJIS[type]}</span>
@@ -53,7 +53,7 @@ export function ReactionBadges({ reactions, userReaction, onReact, compact }: Re
     return (
       <button
         onClick={() => onReact('like')}
-        className="flex items-center gap-1 text-gray-400 hover:text-sky-500 transition-colors text-sm"
+        className="flex items-center gap-1 text-gray-400 hover:text-emerald-500 transition-colors text-sm"
       >
         <span>👍</span>
         {!compact && <span>React</span>}
@@ -69,8 +69,8 @@ export function ReactionBadges({ reactions, userReaction, onReact, compact }: Re
           onClick={() => onReact(type)}
           whileTap={{ scale: 0.95 }}
           className={`flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium transition-all ${userReaction === type
-              ? 'bg-sky-500/20 text-sky-400 ring-1 ring-sky-500/30'
-              : 'bg-[#252535] text-gray-400 hover:bg-[#2a2a3a]'
+              ? 'bg-emerald-500/20 text-emerald-400 ring-1 ring-emerald-500/30'
+              : 'bg-[#243030] text-gray-400 hover:bg-[#2a2a3a]'
             }`}
         >
           <span>{REACTION_EMOJIS[type]}</span>

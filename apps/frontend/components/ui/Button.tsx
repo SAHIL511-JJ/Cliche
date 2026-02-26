@@ -14,14 +14,14 @@ interface ButtonProps extends Omit<HTMLMotionProps<'button'>, 'ref'> {
 
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant = 'primary', size = 'md', loading, icon, children, disabled, ...props }, ref) => {
-    const baseStyles = 'font-bold rounded-xl transition-all duration-300 cubic-bezier(0.34, 1.56, 0.64, 1) inline-flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[#0a0a0f]'
+    const baseStyles = 'font-bold rounded-xl transition-all duration-300 cubic-bezier(0.34, 1.56, 0.64, 1) inline-flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[#0a0f0d]'
 
     const variants = {
-      primary: 'bg-gradient-to-r from-sky-500 to-sky-600 text-white hover:from-sky-400 hover:to-sky-500 hover:shadow-lg hover:shadow-sky-500/40 hover:-translate-y-1 active:scale-[0.98]',
-      secondary: 'bg-[#1a1a25] text-white border border-white/10 hover:bg-[#252535] hover:border-white/20 hover:shadow-lg hover:-translate-y-1 active:scale-[0.98]',
+      primary: 'bg-gradient-to-r from-emerald-500 to-emerald-600 text-white hover:from-emerald-400 hover:to-emerald-500 hover:shadow-lg hover:shadow-emerald-500/25 hover:-translate-y-1 active:scale-[0.98]',
+      secondary: 'bg-[#1a2420] text-white border border-white/10 hover:bg-[#243030] hover:border-white/20 hover:shadow-lg hover:-translate-y-1 active:scale-[0.98]',
       ghost: 'bg-transparent text-gray-400 hover:bg-white/5 hover:text-white active:scale-[0.98]',
       danger: 'bg-gradient-to-r from-red-500 to-red-600 text-white hover:from-red-400 hover:to-red-500 hover:shadow-lg hover:shadow-red-500/40 hover:-translate-y-1 active:scale-[0.98]',
-      outline: 'bg-transparent text-sky-400 border-2 border-sky-500 hover:bg-sky-500 hover:text-white hover:shadow-lg hover:shadow-sky-500/40 hover:-translate-y-1 active:scale-[0.98]',
+      outline: 'bg-transparent text-emerald-400 border-2 border-emerald-500 hover:bg-emerald-500 hover:text-white hover:shadow-lg hover:shadow-emerald-500/25 hover:-translate-y-1 active:scale-[0.98]',
     }
 
     const sizes = {

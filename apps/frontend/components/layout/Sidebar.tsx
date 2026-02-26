@@ -72,7 +72,7 @@ export function Sidebar() {
           <motion.div
             whileHover={{ rotate: 180, scale: 1.1 }}
             transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-            className="w-10 h-10 bg-gradient-to-br from-sky-400 to-purple-600 rounded-xl flex items-center justify-center shadow-lg shadow-sky-500/30"
+            className="w-10 h-10 bg-gradient-to-br from-emerald-400 to-teal-600 rounded-xl flex items-center justify-center shadow-lg shadow-emerald-500/20"
           >
             <span className="text-white font-black text-lg">C</span>
           </motion.div>
@@ -89,17 +89,17 @@ export function Sidebar() {
                 <Link
                   href={item.href}
                   className={`flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all duration-300 group ${isActive
-                    ? 'bg-gradient-to-r from-sky-500/20 to-purple-500/20 text-white border border-white/15 shadow-lg'
+                    ? 'bg-gradient-to-r from-emerald-500/20 to-teal-500/20 text-white border border-white/15 shadow-lg'
                     : 'text-gray-400 hover:bg-white/5 hover:text-white'
                     }`}
                 >
-                  <item.icon className={`w-5 h-5 transition-transform duration-300 group-hover:scale-110 ${isActive ? 'text-sky-400' : ''
+                  <item.icon className={`w-5 h-5 transition-transform duration-300 group-hover:scale-110 ${isActive ? 'text-emerald-400' : ''
                     }`} />
                   <span className="font-semibold text-sm">{item.label}</span>
                   {isActive && (
                     <motion.div
                       layoutId="activeNav"
-                      className="absolute left-0 w-1 h-8 bg-gradient-to-b from-sky-400 to-purple-500 rounded-r-full"
+                      className="absolute left-0 w-1 h-8 bg-gradient-to-b from-emerald-400 to-teal-500 rounded-r-full"
                       transition={{ type: 'spring', stiffness: 300, damping: 30 }}
                     />
                   )}
@@ -112,12 +112,12 @@ export function Sidebar() {
 
       <div className="p-4 border-t border-white/10">
         <div className="glass-card p-4 relative overflow-hidden group">
-          <div className="absolute inset-0 bg-gradient-to-br from-sky-500/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+          <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/10 to-teal-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
           <h3 className="font-bold text-white mb-1 relative z-10">Create a Post</h3>
           <p className="text-xs text-gray-400 mb-3 relative z-10">Share something and let people vote!</p>
           <Link
             href="/create"
-            className="block w-full py-2.5 bg-gradient-to-r from-sky-500 to-purple-600 text-white text-center rounded-xl font-bold text-sm hover:from-sky-400 hover:to-purple-500 transition-all duration-300 hover:shadow-lg hover:shadow-sky-500/30 hover:-translate-y-0.5 relative z-10"
+            className="block w-full py-2.5 bg-gradient-to-r from-emerald-500 to-teal-600 text-white text-center rounded-xl font-bold text-sm hover:from-emerald-400 hover:to-teal-500 transition-all duration-300 hover:shadow-lg hover:shadow-emerald-500/20 hover:-translate-y-0.5 relative z-10"
           >
             Get Started
           </Link>
@@ -147,11 +147,11 @@ export function MobileNav() {
             <Link
               key={item.href}
               href={item.href}
-              className={`flex flex-col items-center justify-center min-w-[56px] py-1.5 transition-all duration-200 ${isActive ? 'text-sky-400' : 'text-gray-500'
+              className={`flex flex-col items-center justify-center min-w-[56px] py-1.5 transition-all duration-200 ${isActive ? 'text-emerald-400' : 'text-gray-500'
                 }`}
             >
               {isCreate ? (
-                <div className="w-10 h-10 rounded-full bg-gradient-to-r from-sky-500 to-purple-600 flex items-center justify-center shadow-lg shadow-sky-500/30 -mt-4">
+                <div className="w-10 h-10 rounded-full bg-gradient-to-r from-emerald-500 to-teal-600 flex items-center justify-center shadow-lg shadow-emerald-500/20 -mt-4">
                   <item.icon className="w-5 h-5 text-white" />
                 </div>
               ) : (
@@ -161,7 +161,7 @@ export function MobileNav() {
                   {isActive && (
                     <motion.div
                       layoutId="mobileActiveTab"
-                      className="w-1 h-1 rounded-full bg-sky-400 mt-0.5"
+                      className="w-1 h-1 rounded-full bg-emerald-400 mt-0.5"
                       transition={{ type: 'spring', stiffness: 300, damping: 30 }}
                     />
                   )}

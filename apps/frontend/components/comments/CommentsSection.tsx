@@ -88,17 +88,17 @@ export function CommentsSection({ postId }: CommentsSectionProps) {
           <h3 className="text-lg font-semibold text-white">
             Comments {total > 0 && `(${total})`}
           </h3>
-          <div className="flex gap-1 bg-[#1a1a25] rounded-lg p-1">
+          <div className="flex gap-1 bg-[#1a2420] rounded-lg p-1">
             <button
               onClick={() => setSortBy('new')}
-              className={`px-3 py-1 text-sm font-medium rounded-md transition-colors ${sortBy === 'new' ? 'bg-[#252535] text-white shadow-sm' : 'text-gray-500 hover:text-gray-300'
+              className={`px-3 py-1 text-sm font-medium rounded-md transition-colors ${sortBy === 'new' ? 'bg-[#243030] text-white shadow-sm' : 'text-gray-500 hover:text-gray-300'
                 }`}
             >
               New
             </button>
             <button
               onClick={() => setSortBy('top')}
-              className={`px-3 py-1 text-sm font-medium rounded-md transition-colors ${sortBy === 'top' ? 'bg-[#252535] text-white shadow-sm' : 'text-gray-500 hover:text-gray-300'
+              className={`px-3 py-1 text-sm font-medium rounded-md transition-colors ${sortBy === 'top' ? 'bg-[#243030] text-white shadow-sm' : 'text-gray-500 hover:text-gray-300'
                 }`}
             >
               Top
@@ -116,10 +116,10 @@ export function CommentsSection({ postId }: CommentsSectionProps) {
           <div className="p-6 space-y-4">
             {[1, 2, 3].map((i) => (
               <div key={i} className="animate-pulse flex gap-3">
-                <div className="w-8 h-8 bg-[#252535] rounded-full" />
+                <div className="w-8 h-8 bg-[#243030] rounded-full" />
                 <div className="flex-1">
-                  <div className="h-4 bg-[#252535] rounded w-24 mb-2" />
-                  <div className="h-4 bg-[#252535] rounded w-3/4" />
+                  <div className="h-4 bg-[#243030] rounded w-24 mb-2" />
+                  <div className="h-4 bg-[#243030] rounded w-3/4" />
                 </div>
               </div>
             ))}
@@ -154,7 +154,7 @@ export function CommentsSection({ postId }: CommentsSectionProps) {
                 <button
                   onClick={loadMore}
                   disabled={loadingMore}
-                  className="text-sky-500 font-medium text-sm hover:text-sky-600 disabled:opacity-50"
+                  className="text-emerald-500 font-medium text-sm hover:text-emerald-600 disabled:opacity-50"
                 >
                   {loadingMore ? 'Loading...' : 'Load more comments'}
                 </button>

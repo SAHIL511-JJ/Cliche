@@ -55,7 +55,7 @@ export function Modal({ isOpen, onClose, title, children, className }: ModalProp
             <motion.div
               className={cn(
                 'w-full max-w-md max-h-[90vh] overflow-y-auto',
-                'bg-[#14141e] border border-white/10 rounded-2xl shadow-2xl',
+                'bg-[#141e1a] border border-white/10 rounded-2xl shadow-2xl',
                 className
               )}
               initial={{ opacity: 0, scale: 0.95, y: 20 }}

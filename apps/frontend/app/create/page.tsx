@@ -233,7 +233,7 @@ export default function CreatePage() {
             className="glass-card p-8 max-w-md w-full text-center"
           >
             <motion.div
-              className="w-20 h-20 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg shadow-emerald-500/30"
+              className="w-20 h-20 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg shadow-emerald-500/20"
               initial={{ scale: 0, rotate: -180 }}
               animate={{ scale: 1, rotate: 0 }}
               transition={{ type: 'spring', damping: 12, stiffness: 200, delay: 0.2 }}
@@ -247,7 +247,7 @@ export default function CreatePage() {
             <div className="space-y-3">
               <a
                 href={`/p/${success.id}`}
-                className="block w-full py-3.5 bg-gradient-to-r from-sky-500 to-sky-600 text-white rounded-xl font-semibold hover:shadow-lg hover:shadow-sky-500/30 transition-all hover:-translate-y-1"
+                className="block w-full py-3.5 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white rounded-xl font-semibold hover:shadow-lg hover:shadow-emerald-500/20 transition-all hover:-translate-y-1"
               >
                 View Post
               </a>
@@ -255,7 +255,7 @@ export default function CreatePage() {
                 onClick={() => {
                   navigator.clipboard.writeText(success.share_url)
                 }}
-                className="block w-full py-3.5 bg-[#1a1a25] text-gray-300 rounded-xl font-semibold hover:bg-[#252535] transition-colors border border-white/10"
+                className="block w-full py-3.5 bg-[#1a2420] text-gray-300 rounded-xl font-semibold hover:bg-[#243030] transition-colors border border-white/10"
               >
                 Copy Link
               </button>
@@ -288,7 +288,7 @@ export default function CreatePage() {
             {visualSteps.map((s, i) => (
               <div key={s} className="flex items-center">
                 <div
-                  className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold text-sm transition-all ${s <= step ? 'bg-gradient-to-r from-sky-500 to-purple-600 text-white shadow-lg shadow-sky-500/30' : 'bg-[#1a1a25] text-gray-500'
+                  className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold text-sm transition-all ${s <= step ? 'bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-lg shadow-emerald-500/20' : 'bg-[#1a2420] text-gray-500'
                     }`}
                 >
                   {s < step ? (
@@ -300,7 +300,7 @@ export default function CreatePage() {
                   )}
                 </div>
                 {i < visualSteps.length - 1 && (
-                  <div className={`w-12 h-1 mx-1 rounded-full transition-all ${s < step ? 'bg-gradient-to-r from-sky-500 to-purple-600' : 'bg-[#1a1a25]'}`} />
+                  <div className={`w-12 h-1 mx-1 rounded-full transition-all ${s < step ? 'bg-gradient-to-r from-emerald-500 to-teal-600' : 'bg-[#1a2420]'}`} />
                 )}
               </div>
             ))}
@@ -324,8 +324,8 @@ export default function CreatePage() {
                       key={mode.value}
                       onClick={() => handleModeSelect(mode.value)}
                       className={`w-full p-4 rounded-xl text-left transition-all flex items-center gap-4 ${postMode === mode.value
-                        ? 'bg-sky-500/15 border-2 border-sky-500 shadow-lg shadow-sky-500/10'
-                        : 'bg-[#1a1a25]/50 border-2 border-transparent hover:bg-[#1a1a25] hover:border-white/10'
+                        ? 'bg-emerald-500/15 border-2 border-emerald-500 shadow-lg shadow-emerald-500/10'
+                        : 'bg-[#1a2420]/50 border-2 border-transparent hover:bg-[#1a2420] hover:border-white/10'
                         }`}
                     >
                       <span className="text-2xl">{mode.icon}</span>
@@ -334,7 +334,7 @@ export default function CreatePage() {
                         <div className="text-sm text-gray-400">{mode.description}</div>
                       </div>
                       {postMode === mode.value && (
-                        <svg className="w-6 h-6 text-sky-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <svg className="w-6 h-6 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                         </svg>
                       )}
@@ -364,7 +364,7 @@ export default function CreatePage() {
                     <div key={item.id} className={`relative ${postMode === 'rate' ? '' : ''}`}>
                       <div
                         onClick={() => openImagePicker(item.id)}
-                        className={`${postMode === 'rate' ? 'h-40' : 'aspect-square'} rounded-2xl border-2 border-dashed cursor-pointer overflow-hidden transition-all mb-3 ${item.image_url ? 'border-transparent' : 'border-gray-600 hover:border-sky-400 hover:bg-white/5'
+                        className={`${postMode === 'rate' ? 'h-40' : 'aspect-square'} rounded-2xl border-2 border-dashed cursor-pointer overflow-hidden transition-all mb-3 ${item.image_url ? 'border-transparent' : 'border-gray-600 hover:border-emerald-400 hover:bg-white/5'
                           }`}
                       >
                         {item.image_url ? (
@@ -395,7 +395,7 @@ export default function CreatePage() {
                         placeholder={`Option ${index + 1} name *`}
                         value={item.name}
                         onChange={(e) => updateItem(item.id, { name: e.target.value })}
-                        className="w-full px-4 py-3 text-sm bg-[#1a1a25]/50 text-white placeholder-gray-500 border border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent"
+                        className="w-full px-4 py-3 text-sm bg-[#1a2420]/50 text-white placeholder-gray-500 border border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                         required
                       />
                       {items.length > minItems && (
@@ -412,7 +412,7 @@ export default function CreatePage() {
                   {items.length < maxItems && (
                     <button
                       onClick={addItem}
-                      className="aspect-square rounded-2xl border-2 border-dashed border-gray-600 flex items-center justify-center text-gray-500 hover:border-sky-400 hover:text-sky-400 hover:bg-sky-500/5 transition-all"
+                      className="aspect-square rounded-2xl border-2 border-dashed border-gray-600 flex items-center justify-center text-gray-500 hover:border-emerald-400 hover:text-emerald-400 hover:bg-emerald-500/5 transition-all"
                     >
                       <div className="text-center">
                         <svg className="w-8 h-8 mx-auto mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -443,8 +443,8 @@ export default function CreatePage() {
                       key={attr}
                       onClick={() => toggleAttribute(attr)}
                       className={`px-5 py-2.5 rounded-full text-sm font-medium transition-all ${attributes.includes(attr)
-                        ? 'bg-sky-500 text-white shadow-lg shadow-sky-500/25'
-                        : 'bg-[#1a1a25] text-gray-400 hover:bg-[#252535] hover:text-white'
+                        ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/25'
+                        : 'bg-[#1a2420] text-gray-400 hover:bg-[#243030] hover:text-white'
                         }`}
                     >
                       {attr}
@@ -456,7 +456,7 @@ export default function CreatePage() {
                       <button
                         key={attr}
                         onClick={() => toggleAttribute(attr)}
-                        className="px-5 py-2.5 rounded-full text-sm font-medium bg-sky-500 text-white shadow-lg shadow-sky-500/25"
+                        className="px-5 py-2.5 rounded-full text-sm font-medium bg-emerald-500 text-white shadow-lg shadow-emerald-500/25"
                       >
                         {attr}
                       </button>
@@ -470,7 +470,7 @@ export default function CreatePage() {
                     value={customAttribute}
                     onChange={(e) => setCustomAttribute(e.target.value)}
                     onKeyDown={(e) => e.key === 'Enter' && addCustomAttribute()}
-                    className="flex-1 px-4 py-3 bg-[#1a1a25]/50 text-white placeholder-gray-500 border border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent"
+                    className="flex-1 px-4 py-3 bg-[#1a2420]/50 text-white placeholder-gray-500 border border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                     maxLength={20}
                   />
                   <Button onClick={addCustomAttribute} disabled={!customAttribute.trim() || attributes.length >= 5}>
@@ -488,7 +488,7 @@ export default function CreatePage() {
                 exit={{ opacity: 0, x: -20 }}
                 className="glass-card p-6 text-center"
               >
-                <div className="w-16 h-16 bg-[#1a1a25] rounded-full flex items-center justify-center mx-auto mb-4">
+                <div className="w-16 h-16 bg-[#1a2420] rounded-full flex items-center justify-center mx-auto mb-4">
                   <svg className="w-8 h-8 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
                   </svg>
@@ -513,7 +513,7 @@ export default function CreatePage() {
                   placeholder="e.g., Who wore it better?"
                   value={caption}
                   onChange={(e) => setCaption(e.target.value)}
-                  className="w-full px-4 py-3 bg-[#1a1a25]/50 text-white placeholder-gray-500 border border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent resize-none"
+                  className="w-full px-4 py-3 bg-[#1a2420]/50 text-white placeholder-gray-500 border border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent resize-none"
                   rows={4}
                   maxLength={120}
                 />
@@ -533,11 +533,11 @@ export default function CreatePage() {
                 <p className="text-gray-400 text-sm mb-6">Set when this post&apos;s voting period will end</p>
 
                 {/* Mode Toggle */}
-                <div className="flex gap-2 mb-6 p-1 bg-[#1a1a25] rounded-xl">
+                <div className="flex gap-2 mb-6 p-1 bg-[#1a2420] rounded-xl">
                   <button
                     onClick={() => setEndTimeMode('preset')}
                     className={`flex-1 py-2 px-4 rounded-lg font-medium transition-all ${endTimeMode === 'preset'
-                      ? 'bg-[#252535] text-sky-400 shadow-sm'
+                      ? 'bg-[#243030] text-emerald-400 shadow-sm'
                       : 'text-gray-500 hover:text-gray-300'
                       }`}
                   >
@@ -546,7 +546,7 @@ export default function CreatePage() {
                   <button
                     onClick={() => setEndTimeMode('custom')}
                     className={`flex-1 py-2 px-4 rounded-lg font-medium transition-all ${endTimeMode === 'custom'
-                      ? 'bg-[#252535] text-sky-400 shadow-sm'
+                      ? 'bg-[#243030] text-emerald-400 shadow-sm'
                       : 'text-gray-500 hover:text-gray-300'
                       }`}
                   >
@@ -562,8 +562,8 @@ export default function CreatePage() {
                         key={opt.value}
                         onClick={() => setDuration(opt.value)}
                         className={`p-4 rounded-xl font-medium transition-all ${duration === opt.value
-                          ? 'bg-gradient-to-r from-sky-500 to-sky-600 text-white shadow-lg shadow-sky-500/25'
-                          : 'bg-[#1a1a25] text-gray-400 hover:bg-[#252535] hover:text-white'
+                          ? 'bg-gradient-to-r from-emerald-500 to-emerald-600 text-white shadow-lg shadow-emerald-500/25'
+                          : 'bg-[#1a2420] text-gray-400 hover:bg-[#243030] hover:text-white'
                           }`}
                       >
                         {opt.label}
@@ -585,7 +585,7 @@ export default function CreatePage() {
                           value={customEndDate}
                           onChange={(e) => setCustomEndDate(e.target.value)}
                           min={new Date().toISOString().split('T')[0]}
-                          className="w-full p-3 bg-[#1a1a25]/50 text-white border border-white/10 rounded-xl focus:border-sky-500 focus:ring-2 focus:ring-sky-500/30 outline-none transition-all"
+                          className="w-full p-3 bg-[#1a2420]/50 text-white border border-white/10 rounded-xl focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/30 outline-none transition-all"
                         />
                       </div>
                       <div>
@@ -596,12 +596,12 @@ export default function CreatePage() {
                           type="time"
                           value={customEndTime}
                           onChange={(e) => setCustomEndTime(e.target.value)}
-                          className="w-full p-3 bg-[#1a1a25]/50 text-white border border-white/10 rounded-xl focus:border-sky-500 focus:ring-2 focus:ring-sky-500/30 outline-none transition-all"
+                          className="w-full p-3 bg-[#1a2420]/50 text-white border border-white/10 rounded-xl focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/30 outline-none transition-all"
                         />
                       </div>
                     </div>
                     {customEndDate && customEndTime && (
-                      <p className="text-sm text-gray-400 bg-[#1a1a25] p-3 rounded-lg">
+                      <p className="text-sm text-gray-400 bg-[#1a2420] p-3 rounded-lg">
                         Ends at: {new Date(`${customEndDate}T${customEndTime}`).toLocaleString()}
                       </p>
                     )}
@@ -623,7 +623,7 @@ export default function CreatePage() {
         </div>
       </main>
 
-      <div className="fixed bottom-[60px] lg:bottom-0 left-0 right-0 lg:left-64 p-4 bg-[#0a0a0f]/95 backdrop-blur-xl border-t border-white/10 z-50" style={{ paddingBottom: 'max(1rem, env(safe-area-inset-bottom, 0px))' }}>
+      <div className="fixed bottom-[60px] lg:bottom-0 left-0 right-0 lg:left-64 p-4 bg-[#0a0f0d]/95 backdrop-blur-xl border-t border-white/10 z-50" style={{ paddingBottom: 'max(1rem, env(safe-area-inset-bottom, 0px))' }}>
         <div className="max-w-2xl mx-auto flex gap-3">
           {step > 1 && (
             <Button
@@ -652,14 +652,14 @@ export default function CreatePage() {
           <div className="space-y-3">
             <button
               onClick={() => fileInputRef.current?.click()}
-              className="w-full p-4 text-left rounded-xl bg-[#1a1a25] hover:bg-[#252535] transition-colors flex items-center gap-3 text-white"
+              className="w-full p-4 text-left rounded-xl bg-[#1a2420] hover:bg-[#243030] transition-colors flex items-center gap-3 text-white"
             >
               <span className="text-2xl">📁</span>
               <span className="font-medium">Gallery</span>
             </button>
             <button
               onClick={() => setShowImageModal(false)}
-              className="w-full p-4 text-left rounded-xl bg-[#1a1a25] hover:bg-[#252535] transition-colors flex items-center gap-3 text-gray-400"
+              className="w-full p-4 text-left rounded-xl bg-[#1a2420] hover:bg-[#243030] transition-colors flex items-center gap-3 text-gray-400"
             >
               <span className="text-2xl">❌</span>
               <span className="font-medium">Cancel</span>

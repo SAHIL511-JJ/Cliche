@@ -18,7 +18,7 @@ export function FeedCard({ post }: FeedCardProps) {
 
   const postTypeColor: Record<string, string> = {
     rate: 'bg-violet-500/20 text-violet-400 border-violet-500/30',
-    poll: 'bg-sky-500/20 text-sky-400 border-sky-500/30',
+    poll: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30',
     wyr: 'bg-amber-500/20 text-amber-400 border-amber-500/30',
     rank: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30',
     compare: 'bg-rose-500/20 text-rose-400 border-rose-500/30',
@@ -37,13 +37,13 @@ export function FeedCard({ post }: FeedCardProps) {
       <div className="relative overflow-hidden" style={{ borderTopLeftRadius: 'var(--radius-xl)', borderTopRightRadius: 'var(--radius-xl)' }}>
         {post.type === 'wyr' ? (
           <div className="relative flex h-40">
-            <div className="flex-1 relative overflow-hidden bg-sky-900/30">
+            <div className="flex-1 relative overflow-hidden bg-emerald-900/30">
               {post.items[0]?.image_url ? (
                 <img src={post.items[0].image_url} alt={post.items[0].name}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
               ) : (
-                <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-sky-500/20 to-purple-500/20">
-                  <span className="text-2xl font-black text-sky-400">{post.items[0]?.name?.charAt(0)}</span>
+                <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-emerald-500/20 to-teal-500/20">
+                  <span className="text-2xl font-black text-emerald-400">{post.items[0]?.name?.charAt(0)}</span>
                 </div>
               )}
               <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-2">
@@ -70,14 +70,14 @@ export function FeedCard({ post }: FeedCardProps) {
             </div>
           </div>
         ) : (
-          <div className="grid grid-cols-2 gap-1 bg-[#1a1a25]/50">
+          <div className="grid grid-cols-2 gap-1 bg-[#1a2420]/50">
             {post.items.slice(0, 4).map((item, index) => (
-              <div key={item.id} className="relative aspect-square overflow-hidden bg-[#1a1a25]/50">
+              <div key={item.id} className="relative aspect-square overflow-hidden bg-[#1a2420]/50">
                 {item.image_url ? (
                   <img src={item.image_url} alt={item.name || `Option ${index + 1}`}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-sky-500/10 to-purple-500/10">
+                  <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-emerald-500/10 to-teal-500/10">
                     <span className="text-2xl font-bold text-gray-400">{item.name?.charAt(0) || '?'}</span>
                   </div>
                 )}
@@ -93,7 +93,7 @@ export function FeedCard({ post }: FeedCardProps) {
 
         {post.has_voted && (
           <div className="absolute top-3 right-3">
-            <div className="bg-gradient-to-r from-emerald-500 to-emerald-600 text-white text-xs font-bold px-3 py-1.5 rounded-full flex items-center gap-1.5 shadow-lg shadow-emerald-500/30">
+            <div className="bg-gradient-to-r from-emerald-500 to-emerald-600 text-white text-xs font-bold px-3 py-1.5 rounded-full flex items-center gap-1.5 shadow-lg shadow-emerald-500/20">
               <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
               </svg>
@@ -125,7 +125,7 @@ export function FeedCard({ post }: FeedCardProps) {
         <div className="flex items-center justify-between pt-3 border-t border-white/10">
           <div className="flex items-center gap-4 text-sm">
             <span className="flex items-center gap-1.5 text-gray-400">
-              <svg className="w-4 h-4 text-sky-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg className="w-4 h-4 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
               <span className="font-semibold text-white">{post.vote_count}</span>

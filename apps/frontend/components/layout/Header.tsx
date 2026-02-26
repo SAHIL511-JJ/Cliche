@@ -36,7 +36,7 @@ export function Header({ showBack, title, rightAction }: HeaderProps) {
               <motion.div
                 whileHover={{ rotate: 180, scale: 1.1 }}
                 transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-                className="w-8 h-8 bg-gradient-to-br from-sky-400 to-purple-600 rounded-lg flex items-center justify-center shadow-lg shadow-sky-500/30"
+                className="w-8 h-8 bg-gradient-to-br from-emerald-400 to-teal-600 rounded-lg flex items-center justify-center shadow-lg shadow-emerald-500/20"
               >
                 <span className="text-white font-black text-sm">C</span>
               </motion.div>

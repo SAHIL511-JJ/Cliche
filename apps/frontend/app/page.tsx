@@ -101,7 +101,7 @@ export default function HomePage() {
                 key={type}
                 onClick={() => setFeedType(type)}
                 className={`px-3.5 sm:px-5 py-2 sm:py-2.5 rounded-lg font-bold text-xs sm:text-sm transition-all duration-300 ${feedType === type
-                    ? 'bg-gradient-to-r from-sky-500 to-purple-600 text-white shadow-lg shadow-sky-500/30'
+                    ? 'bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-lg shadow-emerald-500/20'
                     : 'text-gray-400 hover:text-white hover:bg-white/5'
                   }`}
               >
@@ -131,7 +131,7 @@ export default function HomePage() {
               <p className="text-gray-400 mb-6">Be the first to create a post!</p>
               <a
                 href="/create"
-                className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-sky-500 to-purple-600 text-white rounded-xl font-bold hover:shadow-lg hover:shadow-sky-500/30 transition-all hover:-translate-y-1"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-xl font-bold hover:shadow-lg hover:shadow-emerald-500/20 transition-all hover:-translate-y-1"
               >
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -160,7 +160,7 @@ export default function HomePage() {
           {loadingMore && (
             <div className="flex justify-center py-8">
               <motion.div
-                className="w-8 h-8 border-3 border-sky-500 border-t-transparent rounded-full"
+                className="w-8 h-8 border-3 border-emerald-500 border-t-transparent rounded-full"
                 animate={{ rotate: 360 }}
                 transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
               />

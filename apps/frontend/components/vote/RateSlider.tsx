@@ -46,7 +46,7 @@ export function RateSlider({ attribute, value, onChange }: RateSliderProps) {
           onChange={(e) => onChange(parseInt(e.target.value))}
           className="w-full h-2 rounded-full appearance-none cursor-pointer"
           style={{
-            background: `linear-gradient(to right, ${getScoreColor(value)} ${(value / 10) * 100}%, #1a1a25 ${(value / 10) * 100}%)`
+            background: `linear-gradient(to right, ${getScoreColor(value)} ${(value / 10) * 100}%, #1a2420 ${(value / 10) * 100}%)`
           }}
         />
         <div className="flex justify-between text-xs text-gray-600 mt-1">

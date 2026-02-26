@@ -23,9 +23,9 @@ const TYPE_LABELS: Record<string, string> = {
 }
 
 const TYPE_COLORS: Record<string, string> = {
-  poll: 'from-sky-500 to-indigo-500',
+  poll: 'from-emerald-500 to-indigo-500',
   wyr: 'from-amber-500 to-orange-500',
-  rate: 'from-violet-500 to-purple-500',
+  rate: 'from-violet-500 to-teal-500',
   compare: 'from-rose-500 to-pink-500',
   rank: 'from-emerald-500 to-teal-500',
 }
@@ -97,7 +97,7 @@ export default function ResultsPage() {
         <Sidebar />
         <div className="text-center">
           <p className="text-gray-400 mb-4">{error || 'Results not found'}</p>
-          <a href="/" className="text-sky-400 hover:text-sky-300">Go home</a>
+          <a href="/" className="text-emerald-400 hover:text-emerald-300">Go home</a>
         </div>
       </div>
     )
@@ -125,7 +125,7 @@ export default function ResultsPage() {
               </button>
             )}
             <button onClick={() => setShowShareSheet(true)}
-              className="flex items-center gap-2 px-4 py-2 text-sky-400 font-medium text-sm hover:bg-sky-500/10 rounded-lg transition-colors">
+              className="flex items-center gap-2 px-4 py-2 text-emerald-400 font-medium text-sm hover:bg-emerald-500/10 rounded-lg transition-colors">
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
               </svg>
@@ -185,7 +185,7 @@ export default function ResultsPage() {
                             {item.image_url ? (
                               <img src={item.image_url} alt={item.name} className="w-10 h-10 sm:w-14 sm:h-14 rounded-xl object-cover border border-white/10 cursor-pointer hover:opacity-80 transition-opacity" onClick={() => setLightboxSrc(item.image_url)} loading="lazy" />
                             ) : (
-                              <div className="w-14 h-14 rounded-xl bg-[#1a1a25] flex items-center justify-center border border-white/10">
+                              <div className="w-14 h-14 rounded-xl bg-[#1a2420] flex items-center justify-center border border-white/10">
                                 <span className="text-xl font-bold text-gray-600">{item.name.charAt(0)}</span>
                               </div>
                             )}
@@ -200,12 +200,12 @@ export default function ResultsPage() {
                               <div className="text-xs text-gray-500">{item.vote_count} {item.vote_count === 1 ? 'vote' : 'votes'}</div>
                             </div>
                           </div>
-                          <div className="h-3 bg-[#1a1a25] rounded-full overflow-hidden">
+                          <div className="h-3 bg-[#1a2420] rounded-full overflow-hidden">
                             <motion.div
                               initial={{ width: 0 }}
                               animate={{ width: `${pct}%` }}
                               transition={{ duration: 0.8, delay: 0.3 + index * 0.1, ease: 'easeOut' }}
-                              className={`h-full rounded-full ${isWinner ? 'bg-gradient-to-r from-amber-400 to-amber-500' : 'bg-gradient-to-r from-sky-400 to-sky-500'}`}
+                              className={`h-full rounded-full ${isWinner ? 'bg-gradient-to-r from-amber-400 to-amber-500' : 'bg-gradient-to-r from-emerald-400 to-emerald-500'}`}
                             />
                           </div>
                         </motion.div>
@@ -228,7 +228,7 @@ export default function ResultsPage() {
                       {[a, b].map((item, idx) => {
                         const pct = item.percentage ?? 0
                         const isLeading = idx === 0 ? aWins : !aWins
-                        const gradient = idx === 0 ? 'from-sky-600 to-indigo-600' : 'from-amber-500 to-orange-500'
+                        const gradient = idx === 0 ? 'from-emerald-600 to-indigo-600' : 'from-amber-500 to-orange-500'
                         return (
                           <motion.div
                             key={item.id}
@@ -248,10 +248,10 @@ export default function ResultsPage() {
                                 <div className="absolute top-3 left-3 w-8 h-8 bg-amber-400 rounded-full flex items-center justify-center text-lg shadow-lg">🏆</div>
                               )}
                             </div>
-                            <div className="p-3 sm:p-4 bg-[#14141e]">
+                            <div className="p-3 sm:p-4 bg-[#141e1a]">
                               <p className="font-bold text-white text-sm sm:text-lg mb-1 truncate">{item.name}</p>
                               <div className="flex items-end gap-1 sm:gap-2">
-                                <span className={`text-2xl sm:text-3xl font-black ${idx === 0 ? 'text-sky-400' : 'text-amber-400'}`}>{pct.toFixed(1)}%</span>
+                                <span className={`text-2xl sm:text-3xl font-black ${idx === 0 ? 'text-emerald-400' : 'text-amber-400'}`}>{pct.toFixed(1)}%</span>
                                 <span className="text-xs sm:text-sm text-gray-500 mb-0.5 sm:mb-1">{item.vote_count} votes</span>
                               </div>
                             </div>
@@ -263,15 +263,15 @@ export default function ResultsPage() {
                     {/* WYR Progress bar */}
                     <motion.div className="glass-card p-4 sm:p-6" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }}>
                       <div className="flex items-center justify-between mb-3">
-                        <span className="text-xs sm:text-sm font-semibold text-sky-400 truncate max-w-[40%]">{a.name}</span>
+                        <span className="text-xs sm:text-sm font-semibold text-emerald-400 truncate max-w-[40%]">{a.name}</span>
                         <span className="text-xs sm:text-sm font-semibold text-amber-400 truncate max-w-[40%] text-right">{b.name}</span>
                       </div>
-                      <div className="h-6 bg-[#1a1a25] rounded-full overflow-hidden flex">
+                      <div className="h-6 bg-[#1a2420] rounded-full overflow-hidden flex">
                         <motion.div
                           initial={{ width: 0 }}
                           animate={{ width: `${aPct}%` }}
                           transition={{ duration: 1, ease: 'easeOut' }}
-                          className="h-full bg-gradient-to-r from-sky-600 to-sky-400 flex items-center justify-end pr-2"
+                          className="h-full bg-gradient-to-r from-emerald-600 to-emerald-400 flex items-center justify-end pr-2"
                         >
                           {aPct > 15 && <span className="text-xs font-bold text-white">{aPct.toFixed(0)}%</span>}
                         </motion.div>
@@ -316,7 +316,7 @@ export default function ResultsPage() {
                       {item.image_url && (
                         <div className="relative h-40 sm:h-56 cursor-pointer" onClick={() => setLightboxSrc(item.image_url)}>
                           <img src={item.image_url} alt={item.name} className="w-full h-full object-cover" loading="lazy" />
-                          <div className="absolute inset-0 bg-gradient-to-t from-[#14141e] via-transparent to-transparent" />
+                          <div className="absolute inset-0 bg-gradient-to-t from-[#141e1a] via-transparent to-transparent" />
                         </div>
                       )}
                       <div className="p-4 sm:p-6">
@@ -343,7 +343,7 @@ export default function ResultsPage() {
                                 <span className="font-medium text-gray-300">{attr}</span>
                                 <span className={`text-lg font-black ${getTextColor(s)}`}>{s.toFixed(1)}</span>
                               </div>
-                              <div className="h-3 bg-[#1a1a25] rounded-full overflow-hidden">
+                              <div className="h-3 bg-[#1a2420] rounded-full overflow-hidden">
                                 <motion.div
                                   initial={{ width: 0 }}
                                   animate={{ width: `${(s / 10) * 100}%` }}
@@ -391,7 +391,7 @@ export default function ResultsPage() {
                           initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 + index * 0.1 }}>
                           {/* Item header */}
                           <div className="flex items-center gap-3 sm:gap-4 p-4 sm:p-5 border-b border-white/5">
-                            <span className={`w-10 h-10 rounded-full flex items-center justify-center font-black text-lg shrink-0 ${index === 0 ? 'bg-amber-400 text-white' : index === 1 ? 'bg-gray-400 text-white' : index === 2 ? 'bg-orange-600 text-white' : 'bg-[#252535] text-gray-500'
+                            <span className={`w-10 h-10 rounded-full flex items-center justify-center font-black text-lg shrink-0 ${index === 0 ? 'bg-amber-400 text-white' : index === 1 ? 'bg-gray-400 text-white' : index === 2 ? 'bg-orange-600 text-white' : 'bg-[#243030] text-gray-500'
                               }`}>{index + 1}</span>
                             {item.image_url && (
                               <img src={item.image_url} className="w-12 h-12 sm:w-16 sm:h-16 rounded-xl object-cover border border-white/10 cursor-pointer hover:opacity-80 transition-opacity" onClick={() => setLightboxSrc(item.image_url)} loading="lazy" />
@@ -419,7 +419,7 @@ export default function ResultsPage() {
                                       <span className="text-sm font-medium text-gray-400">{attr}</span>
                                       <span className={`text-sm font-bold ${getTextColor(s)}`}>{s.toFixed(1)}/10</span>
                                     </div>
-                                    <div className="h-2.5 bg-[#1a1a25] rounded-full overflow-hidden">
+                                    <div className="h-2.5 bg-[#1a2420] rounded-full overflow-hidden">
                                       <motion.div
                                         initial={{ width: 0 }}
                                         animate={{ width: `${(s / 10) * 100}%` }}
@@ -450,7 +450,7 @@ export default function ResultsPage() {
                         className={`flex items-center gap-3 sm:gap-4 p-3 sm:p-4 rounded-2xl border transition-all ${index === 0 ? 'bg-amber-500/10 border-amber-500/20' :
                           index === 1 ? 'bg-gray-500/10 border-gray-500/20' :
                             index === 2 ? 'bg-orange-500/10 border-orange-500/20' :
-                              'bg-[#1a1a25]/50 border-white/5'
+                              'bg-[#1a2420]/50 border-white/5'
                           }`}
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
@@ -459,14 +459,14 @@ export default function ResultsPage() {
                         <span className={`w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center font-black text-lg sm:text-xl shrink-0 ${index === 0 ? 'bg-gradient-to-br from-amber-400 to-amber-500 text-white shadow-lg shadow-amber-500/30' :
                           index === 1 ? 'bg-gradient-to-br from-gray-300 to-gray-400 text-white' :
                             index === 2 ? 'bg-gradient-to-br from-orange-600 to-orange-700 text-white' :
-                              'bg-[#252535] text-gray-500'
+                              'bg-[#243030] text-gray-500'
                           }`}>
                           {index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : index + 1}
                         </span>
                         {item.image_url ? (
                           <img src={item.image_url} alt={item.name} className="w-12 h-12 sm:w-16 sm:h-16 rounded-xl object-cover shrink-0 border border-white/10 cursor-pointer hover:opacity-80 transition-opacity" onClick={() => setLightboxSrc(item.image_url)} loading="lazy" />
                         ) : (
-                          <div className="w-16 h-16 rounded-xl bg-[#252535] flex items-center justify-center border border-white/10">
+                          <div className="w-16 h-16 rounded-xl bg-[#243030] flex items-center justify-center border border-white/10">
                             <span className="text-2xl font-bold text-gray-500">{item.name.charAt(0)}</span>
                           </div>
                         )}
@@ -542,21 +542,21 @@ export default function ResultsPage() {
               >
                 <h3 className="text-lg font-semibold text-white mb-4">Quick Stats</h3>
                 <div className="space-y-3">
-                  <div className="flex items-center justify-between p-3 bg-[#1a1a25]/50 rounded-xl">
+                  <div className="flex items-center justify-between p-3 bg-[#1a2420]/50 rounded-xl">
                     <span className="text-gray-400 text-sm">Total Votes</span>
                     <span className="text-lg font-bold text-white">{post.vote_count}</span>
                   </div>
-                  <div className="flex items-center justify-between p-3 bg-[#1a1a25]/50 rounded-xl">
+                  <div className="flex items-center justify-between p-3 bg-[#1a2420]/50 rounded-xl">
                     <span className="text-gray-400 text-sm">Comments</span>
                     <span className="text-lg font-bold text-white">{post.comment_count || 0}</span>
                   </div>
-                  <div className="flex items-center justify-between p-3 bg-[#1a1a25]/50 rounded-xl">
+                  <div className="flex items-center justify-between p-3 bg-[#1a2420]/50 rounded-xl">
                     <span className="text-gray-400 text-sm">Status</span>
                     <span className={`text-sm font-semibold ${isExpired ? 'text-gray-400' : 'text-emerald-400'}`}>
                       {isExpired ? 'Ended' : 'Active'}
                     </span>
                   </div>
-                  <div className="flex items-center justify-between p-3 bg-[#1a1a25]/50 rounded-xl">
+                  <div className="flex items-center justify-between p-3 bg-[#1a2420]/50 rounded-xl">
                     <span className="text-gray-400 text-sm">Type</span>
                     <span className="text-sm font-medium text-white">{TYPE_LABELS[post.type]?.split(' ').slice(1).join(' ') || post.type}</span>
                   </div>
@@ -569,7 +569,7 @@ export default function ResultsPage() {
                     </svg>
                     Share Results
                   </Button>
-                  <a href="/create" className="block w-full py-3 text-center text-sky-400 font-medium hover:bg-sky-500/10 rounded-xl transition-colors">
+                  <a href="/create" className="block w-full py-3 text-center text-emerald-400 font-medium hover:bg-emerald-500/10 rounded-xl transition-colors">
                     Create your own post →
                   </a>
                 </div>

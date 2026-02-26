@@ -192,7 +192,7 @@ export default function VotePage() {
         <Sidebar />
         <div className="text-center">
           <p className="text-gray-400 mb-4">{error || 'Post not found'}</p>
-          <a href="/" className="text-sky-400 hover:text-sky-300">
+          <a href="/" className="text-emerald-400 hover:text-emerald-300">
             Go home
           </a>
         </div>
@@ -269,7 +269,7 @@ export default function VotePage() {
                   <div className="relative h-52 rounded-xl overflow-hidden mb-6">
                     <img src={post.items[0].image_url} alt={post.items[0].name}
                       className="w-full h-full object-cover" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#14141e] via-transparent to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#141e1a] via-transparent to-transparent" />
                     <div className="absolute bottom-4 left-4">
                       <h3 className="text-xl font-black text-white">{post.items[0]?.name}</h3>
                     </div>
@@ -356,7 +356,7 @@ export default function VotePage() {
                       className="flex items-center gap-4 p-4 glass-card"
                     >
                       <motion.span
-                        className="w-8 h-8 flex items-center justify-center bg-sky-500/20 text-sky-400 rounded-full text-sm font-bold"
+                        className="w-8 h-8 flex items-center justify-center bg-emerald-500/20 text-emerald-400 rounded-full text-sm font-bold"
                         key={index}
                         initial={{ scale: 0 }}
                         animate={{ scale: 1 }}
@@ -369,7 +369,7 @@ export default function VotePage() {
                       {item.image_url ? (
                         <img src={item.image_url} alt={item.name} className="w-20 h-20 rounded-xl object-cover border border-white/10" loading="lazy" />
                       ) : (
-                        <div className="w-20 h-20 rounded-xl bg-[#1a1a25] flex items-center justify-center border border-white/10">
+                        <div className="w-20 h-20 rounded-xl bg-[#1a2420] flex items-center justify-center border border-white/10">
                           <span className="text-2xl font-bold text-gray-500">{item.name.charAt(0)}</span>
                         </div>
                       )}
@@ -423,7 +423,7 @@ export default function VotePage() {
 
       {post.type !== 'wyr' && (
         <motion.div
-          className="fixed bottom-[60px] lg:bottom-0 left-0 right-0 lg:left-64 p-4 bg-[#0a0a0f]/95 backdrop-blur-xl border-t border-white/10 z-50"
+          className="fixed bottom-[60px] lg:bottom-0 left-0 right-0 lg:left-64 p-4 bg-[#0a0f0d]/95 backdrop-blur-xl border-t border-white/10 z-50"
           initial={{ y: 100 }}
           animate={{ y: 0 }}
           transition={{ type: 'spring', damping: 25, stiffness: 300 }}

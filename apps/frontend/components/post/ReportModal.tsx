@@ -52,7 +52,7 @@ export function ReportModal({ isOpen, onClose, postId }: ReportModalProps) {
             onClick={onClose}
           />
           <motion.div
-            className="fixed inset-x-4 top-1/2 -translate-y-1/2 z-50 bg-[#14141e] border border-white/10 rounded-2xl p-6 max-w-md mx-auto"
+            className="fixed inset-x-4 top-1/2 -translate-y-1/2 z-50 bg-[#141e1a] border border-white/10 rounded-2xl p-6 max-w-md mx-auto"
             initial={{ opacity: 0, scale: 0.9, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
@@ -68,8 +68,8 @@ export function ReportModal({ isOpen, onClose, postId }: ReportModalProps) {
                   key={reason.value}
                   onClick={() => setSelectedReason(reason.value)}
                   className={`w-full flex items-center gap-3 p-3 rounded-xl text-left transition-all ${selectedReason === reason.value
-                      ? 'bg-sky-500/15 border-2 border-sky-500'
-                      : 'bg-[#1a1a25] border-2 border-transparent hover:bg-[#252535]'
+                      ? 'bg-emerald-500/15 border-2 border-emerald-500'
+                      : 'bg-[#1a2420] border-2 border-transparent hover:bg-[#243030]'
                     }`}
                 >
                   <span className="text-xl">{reason.icon}</span>
@@ -81,7 +81,7 @@ export function ReportModal({ isOpen, onClose, postId }: ReportModalProps) {
             <div className="flex gap-3">
               <button
                 onClick={onClose}
-                className="flex-1 py-3 bg-[#1a1a25] text-gray-300 rounded-xl font-medium hover:bg-[#252535] transition-colors"
+                className="flex-1 py-3 bg-[#1a2420] text-gray-300 rounded-xl font-medium hover:bg-[#243030] transition-colors"
               >
                 Cancel
               </button>

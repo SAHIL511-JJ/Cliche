@@ -95,7 +95,7 @@ export function CommentItem({
       <div className="py-3">
         <div className="flex items-start gap-3">
           <div className="flex-shrink-0">
-            <div className="w-8 h-8 bg-gradient-to-br from-sky-400 to-sky-600 rounded-full flex items-center justify-center">
+            <div className="w-8 h-8 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-full flex items-center justify-center">
               <span className="text-white text-xs font-bold">
                 {comment.display_name.charAt(0)}
               </span>
@@ -116,11 +116,11 @@ export function CommentItem({
                   onChange={(e) => setEditContent(e.target.value)}
                   rows={2}
                   maxLength={1000}
-                  className="w-full px-3 py-2 bg-[#1a1a25]/50 text-white placeholder-gray-500 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent resize-none text-sm"
+                  className="w-full px-3 py-2 bg-[#1a2420]/50 text-white placeholder-gray-500 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent resize-none text-sm"
                 />
                 <div className="flex gap-2 mt-2">
                   <button onClick={() => setIsEditing(false)} className="text-xs text-gray-500 hover:text-gray-300">Cancel</button>
-                  <button onClick={handleEdit} disabled={editLoading || !editContent.trim()} className="text-xs text-sky-500 font-medium hover:text-sky-600 disabled:opacity-50">Save</button>
+                  <button onClick={handleEdit} disabled={editLoading || !editContent.trim()} className="text-xs text-emerald-500 font-medium hover:text-emerald-600 disabled:opacity-50">Save</button>
                 </div>
               </div>
             ) : (
@@ -136,7 +136,7 @@ export function CommentItem({
               />
               <button
                 onClick={() => setShowReplyInput(!showReplyInput)}
-                className="text-xs text-gray-500 hover:text-sky-500 font-medium transition-colors"
+                className="text-xs text-gray-500 hover:text-emerald-500 font-medium transition-colors"
               >
                 Reply
               </button>
@@ -149,11 +149,11 @@ export function CommentItem({
               <button
                 onClick={handleShowReplies}
                 disabled={loadingReplies}
-                className="text-xs text-sky-500 font-medium mt-2 hover:text-sky-600 disabled:opacity-50 flex items-center gap-1.5"
+                className="text-xs text-emerald-500 font-medium mt-2 hover:text-emerald-600 disabled:opacity-50 flex items-center gap-1.5"
               >
                 {loadingReplies ? (
                   <>
-                    <span className="w-3 h-3 rounded-full border-2 border-sky-500 border-t-transparent animate-spin" />
+                    <span className="w-3 h-3 rounded-full border-2 border-emerald-500 border-t-transparent animate-spin" />
                     Loading...
                   </>
                 ) : (

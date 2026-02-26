@@ -16,7 +16,7 @@ export function PollOption({ item, selected, onClick }: PollOptionProps) {
       whileHover={{ y: -4 }}
       whileTap={{ scale: 0.98 }}
       className={`w-full rounded-2xl text-left transition-all overflow-hidden ${selected
-          ? 'border-2 border-sky-500 shadow-lg shadow-sky-500/20'
+          ? 'border-2 border-emerald-500 shadow-lg shadow-emerald-500/20'
           : 'border-2 border-white/10 hover:border-white/20 hover:shadow-lg'
         }`}
       style={{ background: selected ? 'rgba(14, 165, 233, 0.1)' : 'rgba(20, 20, 30, 0.6)' }}
@@ -30,11 +30,11 @@ export function PollOption({ item, selected, onClick }: PollOptionProps) {
             loading="lazy"
           />
         ) : (
-          <div className="w-full h-full bg-gradient-to-br from-sky-900/30 to-indigo-900/30 flex items-center justify-center">
-            <span className="text-6xl font-bold text-sky-500/30">{(item.name || '?').charAt(0)}</span>
+          <div className="w-full h-full bg-gradient-to-br from-emerald-900/30 to-indigo-900/30 flex items-center justify-center">
+            <span className="text-6xl font-bold text-emerald-500/30">{(item.name || '?').charAt(0)}</span>
           </div>
         )}
-        <div className={`absolute inset-0 transition-colors ${selected ? 'bg-sky-500/20' : 'bg-transparent'
+        <div className={`absolute inset-0 transition-colors ${selected ? 'bg-emerald-500/20' : 'bg-transparent'
           }`} />
 
         {selected && (
@@ -42,7 +42,7 @@ export function PollOption({ item, selected, onClick }: PollOptionProps) {
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             transition={{ type: 'spring', damping: 15, stiffness: 300 }}
-            className="absolute top-4 right-4 w-10 h-10 bg-sky-500 rounded-full flex items-center justify-center shadow-lg shadow-sky-500/40"
+            className="absolute top-4 right-4 w-10 h-10 bg-emerald-500 rounded-full flex items-center justify-center shadow-lg shadow-emerald-500/25"
           >
             <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />

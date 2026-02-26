@@ -165,7 +165,7 @@ export default function AdminDashboard() {
               onClick={() => { setActiveTab('all'); setPage(1); }}
               className={`px-4 py-2 rounded-lg font-medium transition-colors ${
                 activeTab === 'all'
-                  ? 'bg-sky-600 text-white'
+                  ? 'bg-emerald-600 text-white'
                   : 'bg-white text-gray-600 hover:bg-gray-100'
               }`}
             >
@@ -175,7 +175,7 @@ export default function AdminDashboard() {
               onClick={() => { setActiveTab('reported'); setPage(1); }}
               className={`px-4 py-2 rounded-lg font-medium transition-colors ${
                 activeTab === 'reported'
-                  ? 'bg-sky-600 text-white'
+                  ? 'bg-emerald-600 text-white'
                   : 'bg-white text-gray-600 hover:bg-gray-100'
               }`}
             >
