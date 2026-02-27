@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback, useRef } from 'react'
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { api } from '@/lib/api'
 import type { Post } from '@/lib/types'
@@ -8,6 +8,7 @@ import { Header } from '@/components/layout/Header'
 import { Sidebar } from '@/components/layout/Sidebar'
 import { FeedCard } from '@/components/feed/FeedCard'
 import { PostCardSkeleton } from '@/components/animations/loadingAnimations'
+import { useRealtimeSubscription } from '@/hooks/useRealtimeSubscription'
 
 type FeedType = 'trending' | 'recent' | 'random'
 
@@ -51,6 +52,31 @@ export default function HomePage() {
     setHasMore(true)
     loadPosts(1, feedType, false)
   }, [feedType, loadPosts])
+
+  // Realtime: update vote counts live on feed cards
+  const realtimeConfigs = useMemo(() => [
+    {
+      table: 'posts',
+      event: '*' as const,
+      onUpdate: (payload: any) => {
+        setPosts(prev =>
+          prev.map(p =>
+            p.id === String(payload.new.id)
+              ? { ...p, vote_count: payload.new.vote_count, comment_count: payload.new.comment_count }
+              : p
+          )
+        )
+      },
+      onInsert: () => {
+        // New post created — refresh if on page 1
+        if (page === 1) {
+          loadPosts(1, feedType, false)
+        }
+      },
+    },
+  ], [feedType, page])
+
+  useRealtimeSubscription(realtimeConfigs)
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -101,8 +127,8 @@ export default function HomePage() {
                 key={type}
                 onClick={() => setFeedType(type)}
                 className={`px-3.5 sm:px-5 py-2 sm:py-2.5 rounded-lg font-bold text-xs sm:text-sm transition-all duration-300 ${feedType === type
-                    ? 'bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-lg shadow-emerald-500/20'
-                    : 'text-gray-400 hover:text-white hover:bg-white/5'
+                  ? 'bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-lg shadow-emerald-500/20'
+                  : 'text-gray-400 hover:text-white hover:bg-white/5'
                   }`}
               >
                 {type.charAt(0).toUpperCase() + type.slice(1)}

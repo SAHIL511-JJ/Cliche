@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { api } from '@/lib/api'
@@ -13,6 +13,7 @@ import { ShareSheet } from '@/components/layout/ShareSheet'
 import { CommentsSection } from '@/components/comments'
 import { useToast } from '@/components/ui/Toast'
 import { ImageLightbox } from '@/components/ui/ImageLightbox'
+import { useRealtimeSubscription } from '@/hooks/useRealtimeSubscription'
 
 const TYPE_LABELS: Record<string, string> = {
   poll: '📊 Poll Results',
@@ -47,6 +48,22 @@ export default function ResultsPage() {
   useEffect(() => {
     loadResults()
   }, [postId])
+
+  // Realtime: re-fetch results when new votes or comments arrive
+  const realtimeConfigs = useMemo(() => [
+    {
+      table: 'votes',
+      filter: `post_id=eq.${postId}`,
+      onInsert: () => loadResults(),
+    },
+    {
+      table: 'posts',
+      filter: `id=eq.${postId}`,
+      onUpdate: () => loadResults(),
+    },
+  ], [postId])
+
+  useRealtimeSubscription(realtimeConfigs)
 
   const loadResults = async () => {
     try {

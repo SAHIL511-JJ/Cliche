@@ -253,7 +253,8 @@ export default function CreatePage() {
               </a>
               <button
                 onClick={() => {
-                  navigator.clipboard.writeText(success.share_url)
+                  const shareUrl = `${window.location.origin}/p/${success.id}`
+                  navigator.clipboard.writeText(shareUrl)
                 }}
                 className="block w-full py-3.5 bg-[#1a2420] text-gray-300 rounded-xl font-semibold hover:bg-[#243030] transition-colors border border-white/10"
               >

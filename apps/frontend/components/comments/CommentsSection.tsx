@@ -1,11 +1,12 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { api } from '@/lib/api'
 import type { Comment, CommentsResponse } from '@/lib/types'
 import { CommentItem } from './CommentItem'
 import { CommentInput } from './CommentInput'
+import { useRealtimeSubscription } from '@/hooks/useRealtimeSubscription'
 
 interface CommentsSectionProps {
   postId: string
@@ -54,6 +55,31 @@ export function CommentsSection({ postId }: CommentsSectionProps) {
     setPage(1)
     loadComments(1)
   }, [loadComments, sortBy])
+
+  // Realtime: live comments
+  const realtimeConfigs = useMemo(() => [
+    {
+      table: 'comments',
+      filter: `post_id=eq.${postId}`,
+      onInsert: (payload: any) => {
+        // Only add top-level comments (no parent_id) — replies handled by CommentItem
+        if (!payload.new.parent_id) {
+          loadComments(1)
+        }
+      },
+      onUpdate: (payload: any) => {
+        setComments(prev =>
+          prev.map(c => c.id === payload.new.id ? { ...c, content: payload.new.content, is_edited: true } : c)
+        )
+      },
+      onDelete: (payload: any) => {
+        setComments(prev => prev.filter(c => c.id !== payload.old.id))
+        setTotal(prev => Math.max(0, prev - 1))
+      },
+    },
+  ], [postId])
+
+  useRealtimeSubscription(realtimeConfigs)
 
   const handleAddComment = async (content: string) => {
     await api.addComment(postId, content)
