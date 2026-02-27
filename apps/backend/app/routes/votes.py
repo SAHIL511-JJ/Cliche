@@ -14,18 +14,10 @@ async def submit_vote(
     post_id: str, vote_data: VoteRequest, request: Request, db=Depends(get_db)
 ):
     client_ip = get_client_ip(request)
-    ip_hash = generate_ip_hash(client_ip, post_id)
+    ip_hash = generate_ip_hash(client_ip, post_id) # IP-only hash for fallback
     browser_id = request.headers.get("X-Browser-ID")
 
-    if await has_voted_by_ip(ip_hash, post_id, db):
-        raise HTTPException(
-            status_code=409,
-            detail={
-                "error": "ALREADY_VOTED",
-                "message": "You have already voted on this post",
-            },
-        )
-
+    # Check browser_id first (device-unique), then fall back to IP
     if browser_id:
         existing = await db.fetchval(
             "SELECT 1 FROM votes WHERE post_id = $1 AND browser_id = $2",
@@ -33,6 +25,16 @@ async def submit_vote(
             browser_id,
         )
         if existing:
+            raise HTTPException(
+                status_code=409,
+                detail={
+                    "error": "ALREADY_VOTED",
+                    "message": "You have already voted on this post",
+                },
+            )
+    else:
+        # No browser_id — fall back to IP-only check
+        if await has_voted_by_ip(ip_hash, post_id, db):
             raise HTTPException(
                 status_code=409,
                 detail={
@@ -87,10 +89,13 @@ async def submit_vote(
                 status_code=400, detail="ranking required for rank type"
             )
 
+    # Generate the ip_hash for storage, which includes browser_id if available
+    storage_ip_hash = generate_ip_hash(client_ip, post_id, browser_id=browser_id)
+
     async with db.transaction():
         await db.execute(
             "INSERT INTO vote_locks (ip_hash, post_id) VALUES ($1, $2)",
-            ip_hash,
+            storage_ip_hash,
             post_id,
         )
 
@@ -114,7 +119,7 @@ async def submit_vote(
                 """,
                     post_id,
                     item_id,
-                    ip_hash,
+                    storage_ip_hash,
                     browser_id,
                     json.dumps(item_ratings),
                 )
@@ -137,7 +142,7 @@ async def submit_vote(
                 """,
                 post_id,
                 vote_data.item_id,
-                ip_hash,
+                storage_ip_hash,
                 browser_id,
                 json.dumps(vote_data.ratings) if vote_data.ratings else None,
                 json.dumps(vote_data.ranking) if vote_data.ranking else None,
@@ -167,24 +172,10 @@ async def submit_vote(
 @router.get("/posts/{post_id}/vote-check")
 async def check_vote_status(post_id: str, request: Request, db=Depends(get_db)):
     client_ip = get_client_ip(request)
-    ip_hash = generate_ip_hash(client_ip, post_id)
-
-    vote = await db.fetchrow(
-        """
-        SELECT created_at FROM vote_locks
-        WHERE ip_hash = $1 AND post_id = $2
-        """,
-        ip_hash,
-        post_id,
-    )
-
-    if vote:
-        return {
-            "success": True,
-            "data": {"has_voted": True, "voted_at": vote["created_at"].isoformat()},
-        }
-
+    ip_hash = generate_ip_hash(client_ip, post_id) # IP-only hash for fallback
     browser_id = request.headers.get("X-Browser-ID")
+
+    # Check browser_id first (device-unique)
     if browser_id:
         existing = await db.fetchrow(
             "SELECT created_at FROM votes WHERE post_id = $1 AND browser_id = $2",
@@ -199,6 +190,21 @@ async def check_vote_status(post_id: str, request: Request, db=Depends(get_db)):
                     "voted_at": existing["created_at"].isoformat(),
                 },
             }
+        # Has browser_id but no vote found — this device hasn't voted
+        return {"success": True, "data": {"has_voted": False, "voted_at": None}}
+
+    # No browser_id — fall back to IP-based check
+    vote = await db.fetchrow(
+        "SELECT created_at FROM vote_locks WHERE ip_hash = $1 AND post_id = $2",
+        ip_hash,
+        post_id,
+    )
+
+    if vote:
+        return {
+            "success": True,
+            "data": {"has_voted": True, "voted_at": vote["created_at"].isoformat()},
+        }
 
     return {"success": True, "data": {"has_voted": False, "voted_at": None}}
 

@@ -24,17 +24,18 @@ export function useFeed(initialType: 'trending' | 'recent' | 'random' = 'trendin
     try {
       const response = await api.getFeed(type, pageNum, 10)
       const newPosts = response.data.posts || []
-      
+
       if (append) {
         setPosts(prev => [...prev, ...newPosts])
       } else {
         setPosts(newPosts)
       }
-      
+
       setHasMore(response.data.pagination?.has_more ?? false)
       setPage(pageNum)
     } catch (err: any) {
       setError(err.message || 'Failed to load posts')
+      setHasMore(false)
     } finally {
       setLoading(false)
     }

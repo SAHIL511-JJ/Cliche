@@ -16,10 +16,14 @@ def get_client_ip(request: Request) -> str:
     return request.client.host if request.client else "unknown"
 
 
-def generate_ip_hash(ip_address: str, post_id: str, salt: str = None) -> str:
+def generate_ip_hash(ip_address: str, post_id: str, salt: str = None, browser_id: str = None) -> str:
     if salt is None:
         salt = os.getenv("HASH_SALT", "rateit-secret-salt")
-    combined = f"{salt}:{ip_address}:{post_id}"
+    # Include browser_id in hash so devices on the same network get unique identities
+    if browser_id:
+        combined = f"{salt}:{ip_address}:{browser_id}:{post_id}"
+    else:
+        combined = f"{salt}:{ip_address}:{post_id}"
     return hashlib.sha256(combined.encode()).hexdigest()
 
 
